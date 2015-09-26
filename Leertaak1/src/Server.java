@@ -33,7 +33,7 @@ public class Server {
 				String line;
 				while((line = in.readLine()) != null){
 					
-					System.out.println(line);
+					System.out.println(line); // change test
 				
 				}
 				
