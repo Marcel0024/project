@@ -22,8 +22,8 @@ public class Server {
 			// Run forever
 			while (true){
 				try {
-					socket = serverSocket.accept();
 					CONNECTIONS.acquire();
+					socket = serverSocket.accept();
 					new Thread(new Runnable() {
 						
 						@Override
