@@ -220,6 +220,7 @@ public class XMLHandler extends DefaultHandler {
 		}
 		
 		db.insertData(strXmlElements);
+		db.closeConnection();
 	}
 	
 }

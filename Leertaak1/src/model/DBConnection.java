@@ -38,6 +38,14 @@ public class DBConnection {
 		}
 	}
 	
+	public void closeConnection(){
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void insertData(String[] measurements) {
 		station = Integer.parseInt(measurements[0]);
 		date = measurements[1].replace("-", "");;
