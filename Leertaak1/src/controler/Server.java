@@ -3,12 +3,16 @@ package controler;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 
 import model.XMLReader;
+import model.DBConnection;
 
 
 public class Server {
 	private ServerSocket serverSocket;
+	private final static  Semaphore CONNECTIONS = new Semaphore(10, true);
+	Socket socket;
 	
 	public Server(){
 		try {
@@ -18,16 +22,18 @@ public class Server {
 			// Run forever
 			while (true){
 				try {
-					Socket socket = serverSocket.accept();
+					socket = serverSocket.accept();
+					CONNECTIONS.acquire();
 					new Thread(new Runnable() {
 						
 						@Override
 						public void run() {
 							new XMLReader(socket);
-							//socket.close();
+							
 						}
 					}).start();
-				} catch (IOException e){
+					CONNECTIONS.release();
+				} catch (IOException | InterruptedException e){
 					e.printStackTrace();
 				}
 			}

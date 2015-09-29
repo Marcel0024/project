@@ -22,7 +22,7 @@ public class XMLHandler extends DefaultHandler {
 	 */
 	boolean[] boolXmlElements = new boolean[14];
 	
-	String[] strXmlElements = new String[14];
+	String[] strXmlElementsValue = new String[14];
 	
 	public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
 		switch (qName){
@@ -75,7 +75,7 @@ public class XMLHandler extends DefaultHandler {
 		
 		for (int i = 0; i < boolXmlElements.length; i++){
 			if (boolXmlElements[i]) {
-				strXmlElements[i] = new String(ch, start, length);
+				strXmlElementsValue[i] = new String(ch, start, length);
 				boolXmlElements[i] = false;
 			}
 		}
@@ -83,143 +83,216 @@ public class XMLHandler extends DefaultHandler {
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("MEASUREMENT")){
-			checkMeasurements(strXmlElements);
+			checkMeasurements(strXmlElementsValue);
 			
 		} else if (qName.equalsIgnoreCase("WEATHERDATA")){
 			throw new SAXException();
 		}
 	}
 	
-	private void checkMeasurements(String[] strXmlElements) {
+	private void checkMeasurements(String[] strXmlElementsValue) {
 
 		double dTemp;
+		double dExtrapolation;
 		DBConnection db = new DBConnection();
 		//Temperature
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[3])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[3])) / 10.0;
 			if (dTemp >= -9999.9 && dTemp <= 9999.9){
-				double extrapolation = db.getData(strXmlElements[0], "temperature");
-				if (dTemp * 1.20 >= extrapolation | dTemp * 0.80 <= extrapolation){
-					strXmlElements[3] = String.valueOf(extrapolation);
+				dExtrapolation = db.getData(strXmlElementsValue[0], "temperature");
+				if (dExtrapolation != 0){
+					if (dTemp * 1.20 >= dExtrapolation | dTemp * 0.80 <= dExtrapolation){
+						strXmlElementsValue[3] = String.valueOf(dExtrapolation);
+					}
+				} else {
+					strXmlElementsValue[3] = String.valueOf((-9999.9 +  9999.9) / 2);
 				}
 			} else {
-				strXmlElements[3] = String.valueOf(db.getData(strXmlElements[0], "temperature"));
+				strXmlElementsValue[3] = String.valueOf(db.getData(strXmlElementsValue[0], "temperature"));
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[3] = String.valueOf(db.getData(strXmlElements[0], "temperature"));
+			strXmlElementsValue[3] = String.valueOf(db.getData(strXmlElementsValue[0], "temperature"));
 		}
 		
 		//Dew point
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[4])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[4])) / 10.0;
 			if (dTemp >= -9999.9 && dTemp <= 9999.9){
 				//Good to go
 			} else {
-				strXmlElements[4] = String.valueOf(db.getData(strXmlElements[0], "dew_point"));
+				strXmlElementsValue[4] = String.valueOf(db.getData(strXmlElementsValue[0], "dew_point"));
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[4] = String.valueOf(db.getData(strXmlElements[0], "dew_point"));
+			strXmlElementsValue[4] = String.valueOf(db.getData(strXmlElementsValue[0], "dew_point"));
 		}
 		
 		//Air pressure station
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[5])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[5])) / 10.0;
 			if (dTemp >= 0.0 && dTemp <= 9999.9){
 				//Good to go
 			} else {
-				strXmlElements[5] = String.valueOf(db.getData(strXmlElements[0], "air_pressure_station"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "air_pressure_station");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[5] = String.valueOf((9999.9 + 0.0) /2);
+				} else {
+					strXmlElementsValue[5] = String.valueOf(db.getData(strXmlElementsValue[0], "air_pressure_station"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[5] = String.valueOf(db.getData(strXmlElements[0], "air_pressure_station"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "air_pressure_station");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[5] = String.valueOf((9999.9 + 0.0) /2);
+			} else {
+				strXmlElementsValue[5] = String.valueOf(db.getData(strXmlElementsValue[0], "air_pressure_station"));
+			}
 		}
 		
 		//Air pressure sea
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[6])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[6])) / 10.0;
 			if (dTemp >= 0.0 && dTemp <= 9999.9){
 				//Good to go
 			} else {
-				strXmlElements[6] = String.valueOf(db.getData(strXmlElements[0], "air_pressure_sea"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "air_pressure_sea");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[6] = String.valueOf((9999.9 + 0.0) /2);
+				} else {
+					strXmlElementsValue[6] = String.valueOf(db.getData(strXmlElementsValue[0], "air_pressure_sea"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[6] = String.valueOf(db.getData(strXmlElements[0], "air_pressure_sea"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "air_pressure_sea");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[6] = String.valueOf((9999.9 + 0.0) /2);
+			} else {
+				strXmlElementsValue[6] = String.valueOf(db.getData(strXmlElementsValue[0], "air_pressure_sea"));
+			}
 		}
-		
 		
 		//Visibility
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[7])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[7])) / 10.0;
 			if (dTemp >= 0.0 && dTemp <= 9999.9){
 				//Good to go
 			} else {
-				strXmlElements[7] = String.valueOf(db.getData(strXmlElements[0], "visibility"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "visibility");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[7] = String.valueOf((9999.9 + 0.0) /2);
+				} else {
+					strXmlElementsValue[7] = String.valueOf(db.getData(strXmlElementsValue[0], "visibility"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[7] = String.valueOf(db.getData(strXmlElements[0], "visibility"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "visibility");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[7] = String.valueOf((9999.9 + 0.0) /2);
+			} else {
+				strXmlElementsValue[7] = String.valueOf(db.getData(strXmlElementsValue[0], "visibility"));
+			}
 		}
-		
 		
 		//Wind speed
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[8])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[8])) / 10.0;
 			if (dTemp >= 0.0 && dTemp <= 9999.9){
 				//Good to go
 			} else {
-				strXmlElements[8] = String.valueOf(db.getData(strXmlElements[0], "wind_speed"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "wind_speed");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[8] = String.valueOf((9999.9 + 0.0) /2);
+				} else {
+					strXmlElementsValue[8] = String.valueOf(db.getData(strXmlElementsValue[0], "wind_speed"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[8] = String.valueOf(db.getData(strXmlElements[0], "wind_speed"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "wind_speed");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[8] = String.valueOf((9999.9 + 0.0) /2);
+			} else {
+				strXmlElementsValue[8] = String.valueOf(db.getData(strXmlElementsValue[0], "wind_speed"));
+			}
 		}
 
 		//Precipitation
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[9])) / 100.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[9])) / 100.0;
 			if (dTemp >= 0.00 && dTemp <= 9999.99){
 				//Good to go
 			} else {
-				strXmlElements[9] = String.valueOf(db.getData(strXmlElements[0], "precipitation"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "precipitation");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[9] = String.valueOf((9999.9 + 0.0) /2);
+				} else {
+					strXmlElementsValue[9] = String.valueOf(db.getData(strXmlElementsValue[0], "precipitation"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[9] = String.valueOf(db.getData(strXmlElements[0], "precipitation"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "precipitation");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[9] = String.valueOf((9999.9 + 0.0) /2);
+			} else {
+				strXmlElementsValue[9] = String.valueOf(db.getData(strXmlElementsValue[0], "precipitation"));
+			}
 		}
 
 		//Snow depth
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[10])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[10])) / 10.0;
 			if (dTemp >= -9999.9 && dTemp <= 9999.9){
 				//Good to go
 			} else {
-				strXmlElements[10] = String.valueOf(db.getData(strXmlElements[0], "snow_depth"));
+				strXmlElementsValue[10] = String.valueOf(db.getData(strXmlElementsValue[0], "snow_depth"));
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[10] = String.valueOf(db.getData(strXmlElements[0], "snow_depth"));
+			strXmlElementsValue[10] = String.valueOf(db.getData(strXmlElementsValue[0], "snow_depth"));
 		}
 
 		//Cloudiness
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[12])) / 10.0;
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[12])) / 10.0;
 			if (dTemp >= 0.0 && dTemp <= 99.9){
 				//Good to go
 			} else {
-				strXmlElements[12] = String.valueOf(db.getData(strXmlElements[0], "cloudiness"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "cloudiness");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[12] = String.valueOf((99.9 + 0.0) /2);
+				} else {
+					strXmlElementsValue[12] = String.valueOf(db.getData(strXmlElementsValue[0], "cloudiness"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[12] = String.valueOf(db.getData(strXmlElements[0], "cloudiness"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "cloudiness");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[12] = String.valueOf((99.9 + 0.0) /2);
+			} else {
+				strXmlElementsValue[12] = String.valueOf(db.getData(strXmlElementsValue[0], "cloudiness"));
+			}
 		}
 		
 		//Wind direction
 		try {
-			dTemp = Math.round(Double.parseDouble(strXmlElements[13]));
+			dTemp = Math.round(Double.parseDouble(strXmlElementsValue[13]));
 			if (dTemp >= 0 && dTemp <= 359){
 				//Good to go
 			} else {
-				strXmlElements[13] = String.valueOf(db.getData(strXmlElements[0], "wind_direction"));
+				dExtrapolation = db.getData(strXmlElementsValue[0], "wind_direction");
+				if (dExtrapolation == 0){
+					strXmlElementsValue[12] = String.valueOf(359 /2);
+				} else {
+					strXmlElementsValue[12] = String.valueOf(db.getData(strXmlElementsValue[0], "wind_direction"));
+				}
 			}
 		} catch (NumberFormatException e){
-			strXmlElements[13] = String.valueOf(db.getData(strXmlElements[0], "wind_direction"));
+			dExtrapolation = db.getData(strXmlElementsValue[0], "wind_direction");
+			if (dExtrapolation == 0){
+				strXmlElementsValue[12] = String.valueOf(359 /2);
+			} else {
+				strXmlElementsValue[12] = String.valueOf(db.getData(strXmlElementsValue[0], "wind_direction"));
+			}
 		}
 		
-		db.insertData(strXmlElements);
+		db.insertData(strXmlElementsValue);
 		db.closeConnection();
 	}
 	

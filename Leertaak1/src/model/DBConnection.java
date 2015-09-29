@@ -46,9 +46,9 @@ public class DBConnection {
 		}
 	}
 	
-	public void insertData(String[] measurements) {
+	public synchronized void insertData(String[] measurements) {
 		station = Integer.parseInt(measurements[0]);
-		date = measurements[1].replace("-", "");;
+		date = measurements[1].replace("-", "");
 		time = measurements[2].replace(":", "");
 		temperature = Double.parseDouble(measurements[3]);
 		dewPoint = Double.parseDouble(measurements[4]);
@@ -70,7 +70,7 @@ public class DBConnection {
 		}
 	}
 	
-	public double getData(String station, String columnName) {
+	public synchronized double getData(String station, String columnName) {
 		double dTemp = 0;
 		int i = 0;
 		try {
