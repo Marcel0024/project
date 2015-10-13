@@ -11,12 +11,13 @@ import org.xml.sax.SAXException;
 
 public class XMLReader {
 	
-	public XMLReader(Socket socket){
+	public XMLReader(Socket socket, DBConnection db){
 		
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
-			XMLHandler handler = new XMLHandler() ;
+			XMLHandler handler = new XMLHandler(db);
+			handler.initArrays();
 			
 			saxParser.parse(socket.getInputStream(), handler);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
