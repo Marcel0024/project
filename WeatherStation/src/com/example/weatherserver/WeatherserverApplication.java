@@ -4,12 +4,14 @@ import com.vaadin.Application;
 import com.vaadin.ui.*;
 
 public class WeatherserverApplication extends Application {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public void init() {
-		Window mainWindow = new Window("Weatherserver Application");
-		Label label = new Label("Hello Vaadin user");
-		mainWindow.addComponent(label);
-		setMainWindow(mainWindow);
+		setMainWindow(new UserInterface());
 	}
 
 }
