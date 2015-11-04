@@ -2,246 +2,239 @@ package model;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLHandler extends DefaultHandler {
-	/*Station
-	 * Date
-	 * Time
-	 * Temperature
-	 * Dew point
-	 * Air pressure station
-	 * Air pressure sea
-	 * Visibility 
-	 * Wind speed
-	 * Precipitation
-	 * Snow depth
-	 * Events
-	 * Cloudiness
-	 * Wind direction
+	
+	// Directory for storing the measurements.
+	private final String DIRECTORY = "C:\\UNWDMI\\Measurements\\";
+	// Error code used for when values are missing.
+	private double error = 404.00;
+	// Array with strings representing the XML elements.
+	private String[] stringXmlElements;
+	// Length of the array of strings representing the XML elements. This is used as the length of other arrays.
+	private int amountOfValues;
+	// Array with booleans representing the XML elements.
+	private boolean[] boolXmlElements;
+	// Array for storing the values of the XML elements.
+	private ArrayList<Object> values; 
+	// Object used for reading CSV files.
+	private CsvReader csvReader;
+	// Object for writing CSV files.
+	private CsvWriter csvWriter;
+	
+	public XMLHandler() {
+		stringXmlElements = new String[]{"STN", "DATE", "TIME", "TEMP", "DEWP", "STP", "SLP", "VISIB", "WDSP", "PRCP", "SNDP", "FRSHTT", "CLDC", "WNDDIR"};
+		amountOfValues = stringXmlElements.length;
+		boolXmlElements = new boolean[amountOfValues];
+		values = new ArrayList<Object>(amountOfValues); 
+		csvReader = new CsvReader();
+	}
+	/*
+	 * Receive notification of the start of an element. 
+	 * This is used to to check if the element is the same as one of the predefined strings in the stringXmlElements array.
+	 * If this is true it will set a true boolean values in the boolXmlElements array at a specific index.
+	 * 
+	 * @param String uri - The Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed.
+	 * @param String localName - The local name (without prefix), or the empty string if Namespace processing is not being performed.
+	 * @param String qName - The qualified name (with prefix), or the empty string if qualified names are not available.
+	 * @param Attributes attributes - The attributes attached to the element. If there are no attributes, it shall be an empty Attributes object.
+	 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
-	private int amountOfArrays = 14;
-	
-	private int amountOfValues = 10;
-	
-	private boolean[] boolXmlElements = new boolean[amountOfArrays];
-	
-	private Object[] tempArray = new Object[amountOfArrays];
-	
-	private ArrayList<ArrayList<Object>> arrays = new ArrayList<ArrayList<Object>>(amountOfArrays); 
-	
-	private DBConnection db;
-	
-	public XMLHandler(DBConnection db) {
-		this.db = db;
+ 	public synchronized void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
+ 		
+ 		for (int i = 0; i < amountOfValues; i++) {
+ 			if (stringXmlElements[i].equals(qName)) {
+ 				boolXmlElements[i] = true;
+ 			}
+ 		}
 	}
-	
-	public void initArrays(){
+	/*
+	 * Receive notification of character data inside an element.
+	 * This used for inserting data into an array that will be used later on to write to a file
+	 * 
+	 * @param char ch - The characters.
+	 * @param int start - The start position in the character array.
+	 * @param int length - The number of characters to use from the character array.
+	 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+	 */
+	public synchronized void characters(char ch[], int start, int length) throws SAXException {
 		
-		for (int i = 0; i < amountOfArrays; i++){
-			arrays.add(new ArrayList<Object>(amountOfValues));
-		}
-	}
-	
- 	public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
-		switch (qName){
-			case "STN":
-				boolXmlElements[0] = true;
-				break;
-			case "DATE":
-				boolXmlElements[1] = true;
-				break;
-			case "TIME":
-				boolXmlElements[2] = true;
-				break;
-			case "TEMP":
-				boolXmlElements[3] =true;
-				break;
-			case "DEWP":
-				boolXmlElements[4] = true;
-				break;
-			case "STP":
-				boolXmlElements[5] = true;
-				break;
-			case "SLP":
-				boolXmlElements[6] = true;
-				break;
-			case "VISIB":
-				boolXmlElements[7] =true;
-				break;
-			case "WDSP":
-				boolXmlElements[8] = true;
-				break;
-			case "PRCP":
-				boolXmlElements[9] = true;
-				break;
-			case "SNDP":
-				boolXmlElements[10] = true;
-				break;
-			case "FRSHTT":
-				boolXmlElements[11] = true;
-				break;
-			case "CLDC":
-				boolXmlElements[12] = true;
-				break;
-			case "WNDDIR":
-				boolXmlElements[13] = true;
-				break;
-		}
-	}
-	
-	public void characters(char ch[], int start, int length) throws SAXException {
-		
-		for (int i = 0; i < boolXmlElements.length; i++) {
+		for (int i = 0; i < amountOfValues; i++) {
 			if (boolXmlElements[i]) {
 				insertDataIntoArray(i, new String(ch, start, length));
 				boolXmlElements[i] = false;
 			}
 		}
 	}
-	
-	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (qName.equalsIgnoreCase("MEASUREMENT")){
-			if (arrays.get(0).size() == amountOfValues) {
-				checkData(arrays);
-				db.insertDataIntoDatabase(amountOfValues, arrays);
-				for (int i = 0; i < amountOfValues; i++) {
-					arrays.get(i).clear();
-				}
-			}
-			
+	/*
+	 * Receive notification of the end of an element.
+	 * Method used for the following: 
+	 *  - Calls checkData() for checking the data.
+	 *  - Makes a new CsvWriter and writes to a file.
+	 *  - Clears the array of values after writer.
+	 * 
+	 * @param String uri - The Namespace URI, or the empty string if the element has no Namespace URI or if Namespace processing is not being performed.
+	 * @param String localName - The local name (without prefix), or the empty string if Namespace processing is not being performed.
+	 * @param String qName - The qualified name (with prefix), or the empty string if qualified names are not available.
+	 * @param Attributes attributes - The attributes attached to the element. If there are no attributes, it shall be an empty Attributes object.
+	 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public synchronized void endElement(String uri, String localName, String qName) throws SAXException {
+		if (qName.equalsIgnoreCase("MEASUREMENT")) {
+			checkData();
+			csvWriter = new CsvWriter(DIRECTORY + csvReader.getDirectory((int) values.get(0)) + "\\" , values.get(1) +".csv");
+			csvWriter.write(values, amountOfValues);
+			values.clear();
+				
 		} else if (qName.equalsIgnoreCase("WEATHERDATA")) {
 			throw new SAXException();
 		}
 	}
-
+	
+	/*
+	 * Saves the values in the values array. 
+	 * If a value is missing, the predefined error value is saved instead.
+	 * If the station number is missing or can't be stored, a error message will be displayed.
+	 * 
+	 * @param int i - The index in the array
+	 * @param Strin value - The value that needs to be saved in the array
+	 * 
+	 */
 	private void insertDataIntoArray(int i, String value) {
 		
 		switch(i) {
 		case 0: // Station
 			try {
-				arrays.get(i).add(Integer.parseInt(value));
+				values.add(Integer.parseInt(value));
 			} catch (NumberFormatException | NullPointerException e) {
-				System.out.println("Station missing");
+				 JOptionPane.showMessageDialog(new JPanel(), e.getMessage(), "Station error", JOptionPane.ERROR_MESSAGE);
 			}
 			break;
 		case 1: // Date
 		case 2: // Time
-		case 11: // Events
-			arrays.get(i).add(value);
+			values.add(value);
 			break;
 		case 3: // Temperature
 		case 4: // Dew point
-		case 10: // Snow depth
-			try {
-				arrays.get(i).add(Math.round(Double.parseDouble(value)) / 10.0);
-			} catch (NumberFormatException | NullPointerException e) {
-				arrays.get(i).add(null);
-			}
-			break;
 		case 5: // Air pressure station
 		case 6: // Air pressure sea
 		case 7: // Visibility
 		case 8: // Wind speed
+		case 10: // Snow depth
+		case 12: // Cloudiness
 			try {
-				arrays.get(i).add(Math.round(Double.parseDouble(value)) / 10.0);
+				values.add(Math.round(Double.parseDouble(value)) / 10.0);
 			} catch (NumberFormatException | NullPointerException e) {
-				arrays.get(i).add(null);
+				values.add(error);
 			}
 			break;
 		case 9: // Precipitation
 			try {
-				arrays.get(i).add(Math.round(Double.parseDouble(value)) / 100.0);
+				values.add(Math.round(Double.parseDouble(value)) / 100.0);
 			} catch (NumberFormatException | NullPointerException e) {
-				arrays.get(i).add(null);
+				values.add(error);
 			}
 			break;
-		case 12: // Cloudiness
-			try {
-				arrays.get(i).add(Math.round(Double.parseDouble(value)) / 10.0);
-			} catch (NumberFormatException | NullPointerException e) {
-				arrays.get(i).add(null);
-			}
-			break;
+		case 11: // Events
 		case 13: // Wind direction
 			try {
-				arrays.get(i).add(Integer.parseInt(value));
+				values.add(Integer.parseInt(value));
 			} catch (NumberFormatException | NullPointerException e) {
-				arrays.get(i).add(null);
+				values.add(error);
 			}
 			break;
 		}
 	}
+	
+	/*
+	 * Uses a loop to check if the values meet the requirements.  Also calls the checkMissingData method for checking for missing data.
+	 */
 
-	private void checkData(ArrayList<ArrayList<Object>> arrays) {
-		double tempDouble;
+	private void checkData() {
 		for (int i = 0; i < amountOfValues; i++) {
-			for (int c = 0; c < amountOfArrays; c++) {
-				tempArray[c] = arrays.get(c).get(i);
-				
-				if (c == 11) {
-					tempArray[c] = (tempArray[c].equals("")) ? db.getEvent((int)tempArray[0]) : tempArray[c];
-					arrays.get(c).set(i, tempArray[c]);
-					//continue;
-				} else if (c ==13) {
-					tempArray[c] = (tempArray[c].equals("")) ? db.getWindDirection((int)tempArray[0]) : tempArray[c];
-					arrays.get(c).set(i, tempArray[c]);
-					//continue;
+			checkMissingData(i);
+			switch(i) {
+			case 3: // Temperature
+				double tempDouble = csvReader.getData((int) values.get(0), i, DIRECTORY);
+				if ((Double) values.get(i) > tempDouble * 0.80 && (Double) values.get(i) < tempDouble * 1.20) {
+					// Good to go
 				} else {
-					tempArray[c] = (tempArray[c] == null) ? db.getData((int)tempArray[0], c) : tempArray[c];
+					values.set(i, tempDouble);
 				}
-				
-				switch(c) {
-				case 3: // Temperature
-					tempDouble = db.getData((int)tempArray[0], c);
-					if ((Double) tempArray[c] > tempDouble * 0.80 && (Double) tempArray[c] < tempDouble * 1.20) {
-						// Good to go
-					} else {
-						arrays.get(c).set(i, tempDouble);
-					}
-					break;
-				case 4: // Dew point
-				case 10: // Snow depth
-					if ((Double) tempArray[c] >= -9999.9 && (Double) tempArray[c] <= 9999.9) {
-						// Good to go
-					} else {
-						arrays.get(c).set(i, db.getData((int)tempArray[0], c));
-					}
-					break;
-				case 5: // Air pressure station
-				case 6: // Air pressure sea
-				case 7: // Visibility
-				case 8: // Wind speed
-					if ((Double) tempArray[c] >= 0.0 && (Double) tempArray[c] <= 9999.9) {
-						// Good to go
-					} else {
-						arrays.get(c).set(i, db.getData((int)tempArray[0], c));
-					}
-					break;
-				case 9: // Precipitation
-					if ((Double) tempArray[c] >= 0.0 && (Double) tempArray[c] <= 9999.99) {
-						// Good to go
-					} else {
-						arrays.get(c).set(i, db.getData((int)tempArray[0], c));
-					}
-					break;
-				case 12: // Cloudiness
-					if ((Double) tempArray[c] >= 0.0 && (Double) tempArray[c] <= 99.9) {
-						// Good to go
-					} else {
-						arrays.get(c).set(i, db.getData((int)tempArray[0], c));
-					}
-					break;
-				case 13: // Wind direction
-					if ((int) tempArray[c] >= 0 && (int) tempArray[c] <= 359) {
-						// Good to go
-					} else {
-						arrays.get(c).set(i, db.getWindDirection((int)tempArray[0]));
-					}
+				break;
+			case 4: // Dew point
+			case 10: // Snow depth
+				if ((Double) values.get(i) >= -9999.9 && (Double) values.get(i) <= 9999.9) {
+					// Good to go
+				} else {
+					values.set(i, csvReader.getData((int) values.get(0), i, DIRECTORY));
+				}
+				break;
+			case 5: // Air pressure station
+			case 6: // Air pressure sea
+			case 7: // Visibility
+			case 8: // Wind speed
+				if ((Double) values.get(i) >= 0.0 && (Double) values.get(i) <= 9999.9) {
+					// Good to go
+				} else {
+					values.set(i, csvReader.getData((int)values.get(0), i, DIRECTORY));
+				}
+				break;
+			case 9: // Precipitation
+				if ((Double) values.get(i) >= 0.0 && (Double) values.get(i) <= 9999.99) {
+					// Good to go
+				} else {
+					values.set(i, csvReader.getData((int) values.get(0), i, DIRECTORY));
+				}
+				break;
+			case 12: // Cloudiness
+				if ((Double) values.get(i) >= 0.0 && (Double) values.get(i) <= 99.9) {
+					// Good to go
+				} else {
+					values.set(i, csvReader.getData((int) values.get(0), i, DIRECTORY));
+				}
+				break;
+			case 13: // Wind direction
+				if ((int) values.get(i) >= 0 && (int) values.get(i) <= 359) {
+					// Good to go
+				} else {
+					values.set(i, csvReader.getEventOrWindDirection((int) values.get(0), i, DIRECTORY));
 				}
 			}
+		}
+	}
+	/*
+	 * Check for missing values. If a value is missing use extrapolate to store in the array.
+	 * 
+	 * @param int i - index of the value.
+	 */
+	private void checkMissingData(int i) {
+		switch(i) {
+		case 3: // Temperature
+		case 4: // Dew point
+		case 5: // Air pressure station
+		case 6: // Air pressure sea
+		case 7: // Visibility
+		case 8: // Wind speed
+		case 9: // Precipitation
+		case 10: // Snow depth
+		case 12: // Cloudiness
+			if ((double) values.get(i) == error) {
+				values.set(i, (double) csvReader.getData((int) values.get(0), i, DIRECTORY));
+			}
+			break;
+		case 11: // Events
+		case 13: // Wind direction
+			if ((int) values.get(i) == error) {
+				values.set(i, (int) csvReader.getEventOrWindDirection((int) values.get(0), i, DIRECTORY));
+			}
+			break;
 		}
 	}
 }
