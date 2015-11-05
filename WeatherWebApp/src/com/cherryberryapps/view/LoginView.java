@@ -2,6 +2,8 @@ package com.cherryberryapps.view;
 
 import com.cherryberryapps.model.DBConnection;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
@@ -18,11 +20,12 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
-public class LoginView extends VerticalLayout {
+public class LoginView extends VerticalLayout implements View {
 
 	public LoginView() {
         setSizeFull();
@@ -73,7 +76,7 @@ public class LoginView extends VerticalLayout {
             	DBConnection connection = new DBConnection();
             	if (connection.isValidUser(username.getValue(), password.getValue())) {
             		//setVisible(false);
-            		Notification.show("SERKAN MAG MIJN BALLEN ZUIGEN!! :D");
+            		UI.getCurrent().getNavigator().navigateTo("menu");
             	} else {
             		Notification notification = new Notification("Invalid username / password.");
                 	notification.setDescription("Please try again.");
@@ -99,5 +102,10 @@ public class LoginView extends VerticalLayout {
         labels.addComponent(welcome);
         return labels;
     }
+
+	@Override
+	public void enter(ViewChangeEvent event) {
+		
+	}
 
 }
