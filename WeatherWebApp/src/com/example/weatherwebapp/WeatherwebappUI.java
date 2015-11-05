@@ -3,20 +3,19 @@ package com.example.weatherwebapp;
 import javax.servlet.annotation.WebServlet;
 
 import com.cherryberryapps.view.LoginView;
+import com.cherryberryapps.view.MenuView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
 @Theme("weatherwebapp")
 public class WeatherwebappUI extends UI {
 
+	Navigator navigator;
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = WeatherwebappUI.class)
 	public static class Servlet extends VaadinServlet {
@@ -25,19 +24,16 @@ public class WeatherwebappUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 		setTheme("valo");
-		final VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
-		setContent(layout);
+		getPage().setTitle("Aruba Networks");
+		navigator = new Navigator(this,this);
+		navigator.addView("login", new LoginView());
+		navigator.addView("menu", new MenuView());
+		navigator.navigateTo("login");
+		//layout.addComponent(new MenuView());
+		//layout.addComponent(new LoginView());
 		
-		layout.addComponent(new LoginView());
-
-		Button button = new Button("Click Me");
-		button.addClickListener(new Button.ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				layout.addComponent(new Label("Thank you for clicking pussy"));
-			}
-		});
-		layout.addComponent(button);
-	}
+	}	
+	
+	
 
 }
