@@ -1,5 +1,6 @@
 package com.cherryberryapps.view;
 
+import com.cherryberryapps.model.DBConnection;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
@@ -29,16 +30,7 @@ public class LoginView extends VerticalLayout {
         Component loginForm = buildLoginForm();
         addComponent(loginForm);
         setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
-
-        Notification notification = new Notification(
-                "Welcome to Dashboard Demo");
-        notification
-                .setDescription("<span>This application is not real, it only demonstrates an application built with the <a href=\"https://vaadin.com\">Vaadin framework</a>.</span> <span>No username or password is required, just click the <b>Sign In</b> button to continue.</span>");
-        notification.setHtmlContentAllowed(true);
-        notification.setStyleName("tray dark small closable login-help");
-        notification.setPosition(Position.BOTTOM_CENTER);
-        notification.setDelayMsec(20000);
-        notification.show(Page.getCurrent());
+  
     }
 	
 	private Component buildLoginForm() {
@@ -75,13 +67,24 @@ public class LoginView extends VerticalLayout {
         fields.addComponents(username, password, signin);
         fields.setComponentAlignment(signin, Alignment.BOTTOM_LEFT);
 
-        /*signin.addClickListener(new ClickListener() {
+        signin.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(final ClickEvent event) {
-                DashboardEventBus.post(new UserLoginRequestedEvent(username
-                        .getValue(), password.getValue()));
+            	DBConnection connection = new DBConnection();
+            	if (connection.isValidUser(username.getValue(), password.getValue())) {
+            		//setVisible(false);
+            		Notification.show("SERKAN MAG MIJN BALLEN ZUIGEN!! :D");
+            	} else {
+            		Notification notification = new Notification("Invalid username / password.");
+                	notification.setDescription("Please try again.");
+            		notification.setHtmlContentAllowed(true);
+                    notification.setStyleName("tray dark small closable login-help");
+                    notification.setPosition(Position.BOTTOM_CENTER);
+                    notification.setDelayMsec(10000);
+                    notification.show(Page.getCurrent());
+            	}
             }
-        });*/
+        });
         return fields;
     }
 
@@ -89,17 +92,11 @@ public class LoginView extends VerticalLayout {
         CssLayout labels = new CssLayout();
         labels.addStyleName("labels");
 
-        Label welcome = new Label("Welcome");
+        Label welcome = new Label("Welcome to Aruba Networks' weather application");
         welcome.setSizeUndefined();
         welcome.addStyleName(ValoTheme.LABEL_H4);
         welcome.addStyleName(ValoTheme.LABEL_COLORED);
         labels.addComponent(welcome);
-
-        Label title = new Label("QuickTickets Dashboard");
-        title.setSizeUndefined();
-        title.addStyleName(ValoTheme.LABEL_H3);
-        title.addStyleName(ValoTheme.LABEL_LIGHT);
-        labels.addComponent(title);
         return labels;
     }
 
