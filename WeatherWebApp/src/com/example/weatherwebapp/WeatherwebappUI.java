@@ -2,6 +2,7 @@ package com.example.weatherwebapp;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.cherryberryapps.view.LoginView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
@@ -27,6 +28,8 @@ public class WeatherwebappUI extends UI {
 		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		setContent(layout);
+		
+		layout.addComponent(new LoginView());
 
 		Button button = new Button("Click Me");
 		button.addClickListener(new Button.ClickListener() {
