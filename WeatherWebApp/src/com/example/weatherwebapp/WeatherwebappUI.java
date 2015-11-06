@@ -3,7 +3,7 @@ package com.example.weatherwebapp;
 import javax.servlet.annotation.WebServlet;
 
 import com.cherryberryapps.view.LoginView;
-import com.cherryberryapps.view.MenuView;
+import com.cherryberryapps.view.MainView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
@@ -27,13 +27,7 @@ public class WeatherwebappUI extends UI {
 		getPage().setTitle("Aruba Networks");
 		navigator = new Navigator(this,this);
 		navigator.addView("login", new LoginView());
-		navigator.addView("menu", new MenuView());
-		navigator.navigateTo("login");
-		//layout.addComponent(new MenuView());
-		//layout.addComponent(new LoginView());
-		
+		navigator.addView("main", new MainView());
+		navigator.navigateTo("main");		
 	}	
-	
-	
-
 }

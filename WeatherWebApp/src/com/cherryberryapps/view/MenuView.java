@@ -1,7 +1,9 @@
 package com.cherryberryapps.view;
 
-import com.vaadin.navigator.View;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import java.io.File;
+
+import com.vaadin.server.FileResource;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
@@ -9,19 +11,19 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class MenuView extends CustomComponent implements View {
+public class MenuView extends CustomComponent{
 
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	String basepath;
 
 	public MenuView(){
 		setPrimaryStyleName("valo-menu");
         setSizeUndefined();
+		
+        basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		
 		CssLayout menuContent = new CssLayout();
         menuContent.addStyleName("sidebar");
@@ -32,6 +34,7 @@ public class MenuView extends CustomComponent implements View {
         menuContent.setHeight("100%");
         
         menuContent.addComponent(buildTitle());
+        menuContent.addComponent(buildLogo());
         menuContent.addComponent(buildMenuItems());
 		
         setCompositionRoot(menuContent);
@@ -48,6 +51,14 @@ public class MenuView extends CustomComponent implements View {
         return logoWrapper;
     }
     
+    private Component buildLogo(){
+		MenuBar logowrap = new MenuBar();
+    	logowrap.addStyleName(ValoTheme.MENU_LOGO);
+    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/original.png"));
+    	logowrap.addItem("",resource,null);
+    	return logowrap;
+    }
+    
 	private Component buildBadgeWrapper(Component menuItemButton) {
         CssLayout dashboardWrapper = new CssLayout(menuItemButton);
         dashboardWrapper.addStyleName("badgewrapper");
@@ -59,26 +70,20 @@ public class MenuView extends CustomComponent implements View {
     	CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
       
-        Component menuItemComponent = new ValoMenuItem("Dataset 1");
+        Component menuItemComponent = new ValoMenuItem("Dataset 1",1);
         menuItemComponent = buildBadgeWrapper(menuItemComponent);
     	menuItemsLayout.addComponent(menuItemComponent);
     	
-    	Component menuItemComponent1 = new ValoMenuItem("Dataset 2");
+    	Component menuItemComponent1 = new ValoMenuItem("Dataset 2",2);
         menuItemComponent1 = buildBadgeWrapper(menuItemComponent1);
     	menuItemsLayout.addComponent(menuItemComponent1);
     	
-    	Component menuItemComponent2 = new ValoMenuItem("Dataset 3");
+    	Component menuItemComponent2 = new ValoMenuItem("Dataset 3",3);
         menuItemComponent2 = buildBadgeWrapper(menuItemComponent2);
     	menuItemsLayout.addComponent(menuItemComponent2);
         
         return menuItemsLayout;
     	
     }
-
-	@Override
-	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 }

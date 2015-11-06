@@ -13,7 +13,7 @@ public class ValoMenuItem extends Button {
 	private static final String STYLE_SELECTED = "selected";
 
 
-    public ValoMenuItem(String caption) {
+    public ValoMenuItem(String caption,int menuIndex) {
         setPrimaryStyleName("valo-menu-item");
         setCaption(caption);
         addClickListener(new ClickListener() {
@@ -22,6 +22,15 @@ public class ValoMenuItem extends Button {
 			@Override
             public void buttonClick(final ClickEvent event) {
 				Notification.show("Welcome to the Animal Farm");
+				switch(menuIndex){
+				case 1:
+					
+					break;
+				case 2:
+					
+					break;
+				
+				}
 				
             }
         });

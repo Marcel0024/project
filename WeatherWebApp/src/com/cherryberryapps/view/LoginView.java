@@ -76,7 +76,7 @@ public class LoginView extends VerticalLayout implements View {
             	DBConnection connection = new DBConnection();
             	if (connection.isValidUser(username.getValue(), password.getValue())) {
             		//setVisible(false);
-            		UI.getCurrent().getNavigator().navigateTo("menu");
+            		UI.getCurrent().getNavigator().navigateTo("main");
             	} else {
             		Notification notification = new Notification("Invalid username / password.");
                 	notification.setDescription("Please try again.");
