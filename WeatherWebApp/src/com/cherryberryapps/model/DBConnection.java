@@ -153,4 +153,26 @@ public class DBConnection {
 		}
 		return false;
 	}
+
+	public synchronized String [][] getDataset1() {
+		String[][] returnValue = new String [10][2];
+		int column;
+		int row = 0;
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT DISTINCT(stations.country), 13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965*measurements.temperature* POW(measurements.wind_speed, 0.16) AS WindChillTemperature FROM stations, measurements WHERE stations.continent = 'Europe' ORDER BY WindChillTemperature LIMIT 10");
+			while (resultSet.next()) {
+				column = 0;
+				returnValue[row][column] = resultSet.getString(1);
+				column++;
+				returnValue[row][column] = resultSet.getString(2);
+				row++;
+			}
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
 }

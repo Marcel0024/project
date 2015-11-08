@@ -2,6 +2,7 @@ package com.cherryberryapps.view;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 
 public class ValoMenuItem extends Button {
 
@@ -21,7 +22,7 @@ public class ValoMenuItem extends Button {
 
 			@Override
             public void buttonClick(final ClickEvent event) {
-				Notification.show("Welcome to the Animal Farm");
+				
 				switch(menuIndex){
 				case 1:
 					

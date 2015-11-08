@@ -6,12 +6,15 @@ import com.vaadin.server.FileResource;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class MenuView extends CustomComponent{
@@ -66,21 +69,52 @@ public class MenuView extends CustomComponent{
         return dashboardWrapper;
     }
 	
-    private Component buildMenuItems(){
+    @SuppressWarnings("serial")
+	private Component buildMenuItems(){
     	CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
       
-        Component menuItemComponent = new ValoMenuItem("Dataset 1",1);
-        menuItemComponent = buildBadgeWrapper(menuItemComponent);
-    	menuItemsLayout.addComponent(menuItemComponent);
-    	
-    	Component menuItemComponent1 = new ValoMenuItem("Dataset 2",2);
+        Component menuItemComponent1 = new ValoMenuItem("Dataset 1",1);
+        menuItemComponent1.addListener(new Listener() {
+			
+			@Override
+			public void componentEvent(Event event) {
+				// TODO Auto-generated method stub
+				if (event.getClass() == Button.ClickEvent.class) {
+					UI.getCurrent().getNavigator().navigateTo("Dataset1");
+				}
+			}
+		});
         menuItemComponent1 = buildBadgeWrapper(menuItemComponent1);
     	menuItemsLayout.addComponent(menuItemComponent1);
     	
-    	Component menuItemComponent2 = new ValoMenuItem("Dataset 3",3);
+    	Component menuItemComponent2 = new ValoMenuItem("Dataset 2",2);
+    	menuItemComponent2.addListener(new Listener() {
+			
+			@Override
+			public void componentEvent(Event event) {
+				// TODO Auto-generated method stub
+				if (event.getClass() == Button.ClickEvent.class) {
+					UI.getCurrent().getNavigator().navigateTo("Dataset2");
+				}
+			}
+		});
         menuItemComponent2 = buildBadgeWrapper(menuItemComponent2);
     	menuItemsLayout.addComponent(menuItemComponent2);
+    	
+    	Component menuItemComponent3 = new ValoMenuItem("Dataset 3",3);
+    	menuItemComponent3.addListener(new Listener() {
+			
+			@Override
+			public void componentEvent(Event event) {
+				// TODO Auto-generated method stub
+				if (event.getClass() == Button.ClickEvent.class) {
+					UI.getCurrent().getNavigator().navigateTo("Dataset3");
+				}
+			}
+		});
+        menuItemComponent3 = buildBadgeWrapper(menuItemComponent3);
+    	menuItemsLayout.addComponent(menuItemComponent3);
         
         return menuItemsLayout;
     	

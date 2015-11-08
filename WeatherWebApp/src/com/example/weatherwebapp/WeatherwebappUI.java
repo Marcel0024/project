@@ -2,6 +2,8 @@ package com.example.weatherwebapp;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.cherryberryapps.view.Dataset1View;
+import com.cherryberryapps.view.Dataset2View;
 import com.cherryberryapps.view.LoginView;
 import com.cherryberryapps.view.MainView;
 import com.vaadin.annotations.Theme;
@@ -28,6 +30,8 @@ public class WeatherwebappUI extends UI {
 		navigator = new Navigator(this,this);
 		navigator.addView("login", new LoginView());
 		navigator.addView("main", new MainView());
+		navigator.addView("Dataset1", new Dataset1View());
+		//navigator.addView("Dataset2", new Dataset2View());
 		navigator.navigateTo("main");		
 	}	
 }
