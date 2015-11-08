@@ -10,16 +10,9 @@ import com.vaadin.ui.themes.ValoTheme;
 public class Dataset2View extends Panel{
 
 	public Dataset2View(){
-		/*setSizeFull();
-		Label label = new Label("DashBoard");
-		label.setStyleName(ValoTheme.LABEL_H2);
-		setMargin(true);
-        Responsive.makeResponsive(this);
-        //addStyleName(ValoTheme.LAYOUT_CARD);
-		addComponent(label);*/
 		
 		 addStyleName(ValoTheme.PANEL_BORDERLESS);
-	     //setSizeFull();
+	     setSizeFull();
 		 setWidth("100%");
 	      
 	     VerticalLayout root = new VerticalLayout();
@@ -34,6 +27,5 @@ public class Dataset2View extends Panel{
 		 
 		 root.addComponent(label);
 	}
-
 	
 }

@@ -21,8 +21,10 @@ public class MenuView extends CustomComponent{
 
 	private static final long serialVersionUID = 1L;
 	String basepath;
+	MainView mainview;
 
-	public MenuView(){
+	public MenuView(MainView mainview){
+		this.mainview = mainview;
 		setPrimaryStyleName("valo-menu");
         setSizeUndefined();
 		
@@ -81,7 +83,8 @@ public class MenuView extends CustomComponent{
 			public void componentEvent(Event event) {
 				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
-					UI.getCurrent().getNavigator().navigateTo("Dataset1");
+					//UI.getCurrent().getNavigator().navigateTo("Dataset1");
+					mainview.goToSet1();
 				}
 			}
 		});
@@ -95,7 +98,8 @@ public class MenuView extends CustomComponent{
 			public void componentEvent(Event event) {
 				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
-					UI.getCurrent().getNavigator().navigateTo("Dataset2");
+					//UI.getCurrent().getNavigator().navigateTo("Dataset2");
+					mainview.goToSet2();
 				}
 			}
 		});

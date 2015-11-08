@@ -6,9 +6,11 @@ import com.cherryberryapps.view.Dataset1View;
 import com.cherryberryapps.view.Dataset2View;
 import com.cherryberryapps.view.LoginView;
 import com.cherryberryapps.view.MainView;
+import com.cherryberryapps.view.MenuView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.View;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
@@ -27,11 +29,12 @@ public class WeatherwebappUI extends UI {
 	protected void init(VaadinRequest request) {
 		setTheme("valo");
 		getPage().setTitle("Aruba Networks");
+		MainView mainview = new MainView();
 		navigator = new Navigator(this,this);
 		navigator.addView("login", new LoginView());
-		navigator.addView("main", new MainView());
-		navigator.addView("Dataset1", new Dataset1View());
-		//navigator.addView("Dataset2", new Dataset2View());
+		navigator.addView("main", mainview);
+		//navigator.addView("Dataset1", new Dataset1View());
+		//navigator.addView("Dataset2",new Dataset2View());
 		navigator.navigateTo("main");		
 	}	
 }

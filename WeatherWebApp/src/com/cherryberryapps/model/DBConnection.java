@@ -160,7 +160,10 @@ public class DBConnection {
 		int row = 0;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT DISTINCT(stations.country), 13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965*measurements.temperature* POW(measurements.wind_speed, 0.16) AS WindChillTemperature FROM stations, measurements WHERE stations.continent = 'Europe' ORDER BY WindChillTemperature LIMIT 10");
+			//query for Chris
+			//resultSet = statement.executeQuery("SELECT DISTINCT(stations.country), 13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965*measurements.temperature* POW(measurements.wind_speed, 0.16) AS WindChillTemperature FROM stations, measurements WHERE stations.continent = 'Europe' ORDER BY WindChillTemperature LIMIT 10");
+			//query for Serkan
+			resultSet = statement.executeQuery("SELECT DISTINCT(stations.country), 13.12 + 0.6215 * measurement.temperature - 11.37 * POW(measurement.windspeed, 0.16) + 0.3965*measurement.temperature* POW(measurement.windspeed, 0.16) AS WindChillTemperature FROM stations, measurement WHERE stations.continent = 'Europe' ORDER BY WindChillTemperature LIMIT 10");
 			while (resultSet.next()) {
 				column = 0;
 				returnValue[row][column] = resultSet.getString(1);
