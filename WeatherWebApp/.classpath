@@ -20,6 +20,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=WeatherWebApp&amp;ivyXmlPath=ivy.xml&amp;confs=widgetset-compile&amp;ivySettingsPath=%24%7Bworkspace_loc%3AWeatherWebApp%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;ivyUserDir=&amp;propertyFiles="/>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=WeatherWebApp&amp;ivyXmlPath=ivy.xml&amp;confs=nodeploy&amp;ivySettingsPath=%24%7Bworkspace_loc%3AWeatherWebApp%2Fivysettings.xml%7D&amp;loadSettingsOnDemand=false&amp;ivyUserDir=&amp;propertyFiles="/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="C:/Users/Christopher/Downloads/vaadin-charts-directorypackage-3.0.0-alpha7/addon/vaadin-charts-3.0.0-alpha7.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Christopher/Downloads/vaadin-charts-directorypackage-3.0.0-alpha7/addon/vaadin-charts-3.0.0-alpha7-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Christopher/Downloads/vaadin-charts-directorypackage-3.0.0-alpha7/addon/vaadin-charts-3.0.0-alpha7-sources.jar"/>
@@ -28,5 +29,9 @@
 	<classpathentry kind="lib" path="C:/Users/Christopher/Downloads/vaadin-charts-directorypackage-3.0.0-alpha7/addon/lib/jackson-core-2.5.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Christopher/Downloads/vaadin-charts-directorypackage-3.0.0-alpha7/addon/lib/jackson-databind-2.5.2.jar"/>
 	<classpathentry kind="lib" path="/vossen-konijnen/bin/opencsv-3.2.jar"/>
+=======
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/mysql-connector-java-5.1.36-bin.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/vaadin-charts-3.0.0-alpha7.jar"/>
+>>>>>>> 71d30f3a05398550e0c1d3ba5bf2ae934edc0628
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
