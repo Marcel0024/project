@@ -160,7 +160,7 @@ public class DBConnection {
 		int row = 0;
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT DISTINCT(stations.country), 13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965*measurements.temperature* POW(measurements.wind_speed, 0.16) AS WindChillTemperature FROM stations, measurements WHERE stations.continent = 'Europe' ORDER BY WindChillTemperature LIMIT 10");
+			resultSet = statement.executeQuery("SELECT stations.country, AVG(13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965*measurements.temperature* POW(measurements.wind_speed, 0.16)) AS WindChillTemperature FROM stations, measurements WHERE stations.continent = 'Europe' AND measurements.station = stations.stn GROUP BY stations.country ORDER BY WindChillTemperature LIMIT 10");
 			while (resultSet.next()) {
 				column = 0;
 				returnValue[row][column] = resultSet.getString(1);
@@ -169,6 +169,30 @@ public class DBConnection {
 				row++;
 			}
 			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+
+	public synchronized String[][] getDataset1Data(String item) {
+		String[][] returnValue = new String [8][2];
+		String[] string = item.split(" ");
+		String country = string[0];
+		int column;
+		int row = 0;
+		
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT measurements.time AS TimeStamp, AVG(13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965 * measurements.temperature * POW(measurements.wind_speed, 0.16)) AS WindChillTemperature FROM stations, measurements WHERE stations.country = '" + country + "' AND measurements.station = stations.stn AND measurements.time >= DATE_SUB(NOW(),INTERVAL 8 HOUR) GROUP BY UNIX_TIMESTAMP(TimeStamp) DIV 3600");
+			while (resultSet.next()) {
+				column = 0;
+				returnValue[row][column] = resultSet.getString(1);
+				column++;
+				returnValue[row][column] = resultSet.getString(2);
+				row++;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
