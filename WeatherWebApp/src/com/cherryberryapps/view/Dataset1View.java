@@ -46,9 +46,9 @@ public class Dataset1View extends HorizontalLayout implements View {
 		connection = new DBConnection();
     	String[][] values = connection.getDataset1();
 		setSizeFull();
-		//addComponent(buildToolbar());
+		addComponent(buildToolbar());
 		addComponent(buildTable(values));
-		//addComponent(buildChart(values));
+		addComponent(buildChart(values));
 		addComponent(buildButton(values));
 		 
 	}
