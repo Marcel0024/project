@@ -23,16 +23,6 @@ public class ValoMenuItem extends Button {
 			@Override
             public void buttonClick(final ClickEvent event) {
 				
-				switch(menuIndex){
-				case 1:
-					
-					break;
-				case 2:
-					
-					break;
-				
-				}
-				
             }
         });
     }}
