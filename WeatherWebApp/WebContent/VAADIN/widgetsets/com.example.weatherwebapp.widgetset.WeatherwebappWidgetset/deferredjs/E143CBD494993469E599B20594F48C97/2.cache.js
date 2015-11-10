@@ -1,0 +1,1 @@
+$wnd.com_example_weatherwebapp_widgetset_WeatherwebappWidgetset.runAsyncCallback2('xgb(1597,1,Gae);_.tc=function Vrc(){fdc((!$cc&&($cc=new ldc),$cc),this.a.d)};S1d(Zh)(2);\n//# sourceURL=com.example.weatherwebapp.widgetset.WeatherwebappWidgetset-2.js\n')
