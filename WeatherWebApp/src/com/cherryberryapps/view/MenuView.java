@@ -100,7 +100,6 @@ public class MenuView extends CustomComponent{
 			public void componentEvent(Event event) {
 				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
-					//UI.getCurrent().getNavigator().navigateTo("Dataset1");
 					mainview.goToSet1();
 				}
 			}
@@ -115,7 +114,6 @@ public class MenuView extends CustomComponent{
 			public void componentEvent(Event event) {
 				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
-					//UI.getCurrent().getNavigator().navigateTo("Dataset2");
 					mainview.goToSet2();
 				}
 			}
@@ -130,7 +128,7 @@ public class MenuView extends CustomComponent{
 			public void componentEvent(Event event) {
 				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
-					UI.getCurrent().getNavigator().navigateTo("Dataset3");
+					mainview.goToSet3();
 				}
 			}
 		});

@@ -14,6 +14,7 @@ public class MainView extends HorizontalLayout implements View {
 	MenuView menuview;
 	Dataset1View dataset1;
 	Dataset2View dataset2;
+	Dataset3View dataset3;
 	
 	public MainView(){
 		setSizeFull();
@@ -27,6 +28,21 @@ public class MainView extends HorizontalLayout implements View {
 	    setExpandRatio(content, 1);
 	}
 
+	public void goToSet1(){
+		if(dataset1 == (null)){
+			dataset1 = new Dataset1View();
+			content.addComponent(dataset1);
+			dataset1.setVisible(true);
+		}
+		if(dataset2 != null){
+			dataset2.setVisible(false);
+		}
+		if(dataset3 != null){
+			dataset3.setVisible(false);
+		}
+		dataset1.setVisible(true);
+	}
+	
 	public void goToSet2(){
 		if(dataset2 == (null)){
 			dataset2 = new Dataset2View();
@@ -35,22 +51,26 @@ public class MainView extends HorizontalLayout implements View {
 		}
 		if(dataset1 != null){
 			dataset1.setVisible(false);
-			//dataset3.setVisible(false);
+		}
+		if(dataset3 != null){
+			dataset3.setVisible(false);
 		}
 		dataset2.setVisible(true);
 	}
 	
-	public void goToSet1(){
-		if(dataset1 == (null)){
-			dataset1 = new Dataset1View();
-			content.addComponent(dataset1);
-			dataset1.setVisible(true);
-			
+	public void goToSet3(){
+		if(dataset3 == (null)){
+			dataset3 = new Dataset3View();
+			content.addComponent(dataset3);
+			dataset3.setVisible(true);
+		}
+		if(dataset1 != null){
+			dataset1.setVisible(false);
 		}
 		if(dataset2 != null){
 			dataset2.setVisible(false);
 		}
-		dataset1.setVisible(true);
+		dataset3.setVisible(true);
 	}
 	
 	
