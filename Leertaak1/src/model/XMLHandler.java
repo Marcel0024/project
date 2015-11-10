@@ -2,9 +2,6 @@ package model;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -113,7 +110,7 @@ public class XMLHandler extends DefaultHandler {
 			try {
 				values.add(Integer.parseInt(value));
 			} catch (NumberFormatException | NullPointerException e) {
-				 JOptionPane.showMessageDialog(new JPanel(), e.getMessage(), "Station error", JOptionPane.ERROR_MESSAGE);
+				 System.out.println("Station error: " + e.getMessage());
 			}
 			break;
 		case 1: // Date

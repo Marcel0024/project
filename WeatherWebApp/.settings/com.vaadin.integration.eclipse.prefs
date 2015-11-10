@@ -1,7 +1,13 @@
 com.vaadin.integration.eclipse.useLatestNightly=false
 com.vaadin.integration.eclipse.widgetsetBuildsSuspended=true
+<<<<<<< HEAD
 com.vaadin.integration.eclipse.widgetsetCompilationEta=88698
 com.vaadin.integration.eclipse.widgetsetDirty=true
+=======
+com.vaadin.integration.eclipse.widgetsetCompilationEta=52128
+com.vaadin.integration.eclipse.widgetsetDirty=true
+com.vaadin.integration.eclipse.widgetsetExtraParameters=-strict
+>>>>>>> 03f3aaea284adf9ec70c4a7c2980f0cdc3a09803
 com.vaadin.integration.eclipse.widgetsetStyle=OBF
 com.vaadin.integration.eclipse.widgetsetVerbose=true
 eclipse.preferences.version=1

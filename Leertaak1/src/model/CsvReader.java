@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import com.opencsv.CSVReader;
 
 public class CsvReader {
@@ -75,7 +72,7 @@ public class CsvReader {
 				 }
 			}
 		 } else {
-			 JOptionPane.showMessageDialog(new JPanel(), "No files in given directory", "Error", JOptionPane.ERROR_MESSAGE);
+			 System.out.println("No files in given directory");
 		 }
 		 return returnValue / counter;
 	}
