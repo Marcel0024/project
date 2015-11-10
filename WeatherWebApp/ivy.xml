@@ -17,6 +17,9 @@
 		<conf name="nodeploy" />
 	</configurations>
 	<dependencies defaultconf="default" defaultconfmapping="default->default">
+		<!-- Vaadin addon charts -->
+		<dependency org="com.vaadin.addon" name="vaadin-charts" rev="3.0.0-alpha7" conf="default->default" />
+		
 		<!-- The core server part of Vaadin -->
 		<dependency org="com.vaadin" name="vaadin-server" rev="&vaadin.version;" />
 

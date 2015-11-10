@@ -21,7 +21,7 @@ public class WeatherwebappUI extends UI {
 
 	Navigator navigator;
 	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = WeatherwebappUI.class)
+	@VaadinServletConfiguration(productionMode = false, ui = WeatherwebappUI.class, widgetset = "com.example.weatherwebapp.widgetset.WeatherwebappWidgetset")
 	public static class Servlet extends VaadinServlet {
 	}
 

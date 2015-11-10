@@ -176,16 +176,14 @@ public class DBConnection {
 		return returnValue;
 	}
 
-	public synchronized String[][] getDataset1Data(String item) {
+	public synchronized String[][] getDataset1Data(String country) {
 		String[][] returnValue = new String [8][2];
-		String[] string = item.split(" ");
-		String country = string[0];
 		int column;
 		int row = 0;
 		
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT measurements.time AS TimeStamp, AVG(13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965 * measurements.temperature * POW(measurements.wind_speed, 0.16)) AS WindChillTemperature FROM stations, measurements WHERE stations.country = '" + country + "' AND measurements.station = stations.stn AND measurements.time >= DATE_SUB(NOW(),INTERVAL 8 HOUR) GROUP BY UNIX_TIMESTAMP(TimeStamp) DIV 3600");
+			resultSet = statement.executeQuery("SELECT measurements.time AS TimeStamp, AVG(13.12 + 0.6215 * measurements.temperature - 11.37 * POW(measurements.wind_speed, 0.16) + 0.3965 * measurements.temperature * POW(measurements.wind_speed, 0.16)) AS WindChillTemperature FROM stations, measurements WHERE stations.country = '"+ country + "' AND measurements.station = stations.stn AND measurements.time >= DATE_SUB(NOW(),INTERVAL 8 HOUR) GROUP BY UNIX_TIMESTAMP(TimeStamp) DIV 3600");
 			while (resultSet.next()) {
 				column = 0;
 				returnValue[row][column] = resultSet.getString(1);
@@ -195,8 +193,7 @@ public class DBConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
+		}		
 		return returnValue;
 	}
 }
