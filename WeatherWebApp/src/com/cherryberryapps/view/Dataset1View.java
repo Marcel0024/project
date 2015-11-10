@@ -14,6 +14,7 @@ import com.vaadin.addon.charts.model.DataSeries;
 import com.vaadin.addon.charts.model.DataSeriesItem;
 import com.vaadin.addon.charts.model.XAxis;
 import com.vaadin.addon.charts.model.YAxis;
+import com.vaadin.addon.charts.model.style.SolidColor;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.FileDownloader;
@@ -59,13 +60,16 @@ public class Dataset1View extends VerticalLayout {
         Responsive.makeResponsive(header);
         
         Label title = new Label("10 clodest countries in Europe");
-        Label description = new Label("A list of the 10 coldest contries in Europe. Countries are wind chill corrected.");
+        
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+        
+        Label description = new Label("A list of the 10 coldest contries in Europe. Countries are wind chill corrected.");
         description.setSizeUndefined();
         description.addStyleName(ValoTheme.LABEL_H3);
         description.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+        
         header.addComponent(title);
         header.addComponent(description);
         
@@ -81,9 +85,11 @@ public class Dataset1View extends VerticalLayout {
         body.setSpacing(true);
         body.setMargin(true);
         Responsive.makeResponsive(body);
+        
         Component table = buildTable(values);
         body.addComponent(table);
         body.setExpandRatio(table, 1);
+        
         Component chart = buildChart(values);
         body.addComponent(chart);
         body.setExpandRatio(chart, 1);
@@ -108,6 +114,9 @@ public class Dataset1View extends VerticalLayout {
 		table.addContainerProperty("Country", String.class, null);
 		table.addContainerProperty("Temperature",  Double.class, null);
 		table.setPageLength(table.size());
+		table.setStyleName(ValoTheme.TABLE_BORDERLESS);
+		table.setStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
+		table.setStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
 		
 		for (String[] value: values) {
 			table.addItem(new Object[]{value[0], (double) Math.round(Double.parseDouble(value[1])* 100) / 100}, null);
@@ -125,7 +134,7 @@ public class Dataset1View extends VerticalLayout {
 					if (value[0] != null) {
 						description.append(value[0]);
 						description.append(" | ");
-						description.append(value[1]);
+						description.append((double) Math.round(Double.parseDouble(value[1])* 100) / 100);
 						description.append(" °C");
 						description.append('\n');
 					}
@@ -146,8 +155,7 @@ public class Dataset1View extends VerticalLayout {
 
 	private Component buildChart(String[][] values) {
 		Chart chart = new Chart(ChartType.COLUMN);
-		chart.setWidth("600px");
-		chart.setHeight("400px");
+		chart.setSizeFull();
 		
 		DataSeries data = new DataSeries();
 		
@@ -155,10 +163,12 @@ public class Dataset1View extends VerticalLayout {
 		Configuration conf = chart.getConfiguration();
 		conf.setTitle("Coldest 10 countries in Europe");
 		conf.getLegend().setEnabled(false);
+		conf.getChart().setBackgroundColor(new SolidColor(255,255,255,0));
 		
 		//XAxis
 		XAxis xaxis = new XAxis();
 		xaxis.setTitle("Country");
+		xaxis.setCategories(values[0][0]);
 		conf.addxAxis(xaxis);
 		
 		//YAxis
@@ -178,7 +188,7 @@ public class Dataset1View extends VerticalLayout {
 		DateFormat dateFormatLong = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
 		DateFormat dateFormatShort = new SimpleDateFormat("dd_MM_yyy");
 		Date date = new Date();
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\" + dateFormatShort.format(date) +"\\";
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\Dataset1" + dateFormatShort.format(date) +"\\";
 		String file = dateFormatLong.format(date) + ".csv";
 		
 		CsvWriter writer = new CsvWriter(basepath , file);
