@@ -196,4 +196,11 @@ public class DBConnection {
 		}		
 		return returnValue;
 	}
+
+	public ArrayList<ArrayList<String>> getStationsInEurope() {
+		ArrayList<ArrayList<String>> stations = new ArrayList<ArrayList<String>>();
+		
+		
+		return stations;
+	}
 }
