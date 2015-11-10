@@ -3,6 +3,7 @@ package com.cherryberryapps.view;
 import java.io.File;
 
 import com.vaadin.server.FileResource;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
@@ -13,6 +14,7 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.themes.ValoTheme;
@@ -27,7 +29,7 @@ public class MenuView extends CustomComponent{
 		this.mainview = mainview;
 		setPrimaryStyleName("valo-menu");
         setSizeUndefined();
-		
+		Responsive.makeResponsive(this);
         basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
 		
 		CssLayout menuContent = new CssLayout();
@@ -38,7 +40,14 @@ public class MenuView extends CustomComponent{
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
         
+        Label label = new Label();
+        FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/original.png"));
+        label.setIcon(resource);
+        
+        //label.addStyleName(ValoTheme.);
+        
         menuContent.addComponent(buildTitle());
+        menuContent.addComponent(label);
         menuContent.addComponent(buildLogo());
         menuContent.addComponent(buildMenuItems());
 		
@@ -58,9 +67,17 @@ public class MenuView extends CustomComponent{
     
     private Component buildLogo(){
 		MenuBar logowrap = new MenuBar();
-    	logowrap.addStyleName(ValoTheme.MENU_LOGO);
-    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/original.png"));
-    	logowrap.addItem("",resource,null);
+    	logowrap.addStyleName("user-menu");
+    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/profile pic.png"));
+    	MenuItem logoitem = logowrap.addItem("",resource,null);
+    	MenuItem logout = logoitem.addItem("Logout",null,null);
+    	
+    	MenuBar.Command mycommand = new MenuBar.Command() {
+    	    public void menuSelected(MenuItem selectedItem) {
+    	       UI.getCurrent().getNavigator().navigateTo("login");
+    	}};
+    	logout.setCommand(mycommand);
+    	
     	return logowrap;
     }
     
