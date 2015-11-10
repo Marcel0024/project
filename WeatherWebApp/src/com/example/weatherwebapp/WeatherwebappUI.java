@@ -14,6 +14,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 @Theme("weatherwebapp")
@@ -29,6 +30,7 @@ public class WeatherwebappUI extends UI {
 	protected void init(VaadinRequest request) {
 		setTheme("valo");
 		getPage().setTitle("Aruba Networks");
+		addStyleName(ValoTheme.UI_WITH_MENU);
 		MainView mainview = new MainView();
 		navigator = new Navigator(this,this);
 		navigator.addView("login", new LoginView());

@@ -2,6 +2,7 @@ package com.cherryberryapps.view;
 
 import java.io.File;
 
+import com.vaadin.client.ui.ImageIcon;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
@@ -25,6 +26,7 @@ public class MenuView extends CustomComponent{
 	String basepath;
 	MainView mainview;
 
+	@SuppressWarnings("serial")
 	public MenuView(MainView mainview){
 		this.mainview = mainview;
 		setPrimaryStyleName("valo-menu");
@@ -40,15 +42,8 @@ public class MenuView extends CustomComponent{
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
         
-        Label label = new Label();
-        FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/original.png"));
-        label.setIcon(resource);
-        
-        //label.addStyleName(ValoTheme.);
-        
         menuContent.addComponent(buildTitle());
-        menuContent.addComponent(label);
-        menuContent.addComponent(buildLogo());
+        menuContent.addComponent(buildProfile());
         menuContent.addComponent(buildMenuItems());
 		
         setCompositionRoot(menuContent);
@@ -65,18 +60,27 @@ public class MenuView extends CustomComponent{
         return logoWrapper;
     }
     
-    private Component buildLogo(){
+    
+    @SuppressWarnings("serial")
+	private Component buildProfile(){
 		MenuBar logowrap = new MenuBar();
     	logowrap.addStyleName("user-menu");
-    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/profile pic.png"));
+    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/aruba-logo.jpg"));
     	MenuItem logoitem = logowrap.addItem("",resource,null);
+    	MenuItem home = logoitem.addItem("Home",null,null);
     	MenuItem logout = logoitem.addItem("Logout",null,null);
     	
-    	MenuBar.Command mycommand = new MenuBar.Command() {
+    	MenuBar.Command homecommand = new MenuBar.Command() {
+    	    public void menuSelected(MenuItem selectedItem) {
+    	    	mainview.goToHome();
+    	}};
+    	
+    	MenuBar.Command logoutcommand = new MenuBar.Command() {
     	    public void menuSelected(MenuItem selectedItem) {
     	       UI.getCurrent().getNavigator().navigateTo("login");
     	}};
-    	logout.setCommand(mycommand);
+    	home.setCommand(homecommand);
+    	logout.setCommand(logoutcommand);
     	
     	return logowrap;
     }

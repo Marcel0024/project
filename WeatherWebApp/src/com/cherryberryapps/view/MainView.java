@@ -15,15 +15,18 @@ public class MainView extends HorizontalLayout implements View {
 	Dataset1View dataset1;
 	Dataset2View dataset2;
 	Dataset3View dataset3;
+	HomeView homeview;
 	
 	public MainView(){
 		setSizeFull();
 	    addStyleName("mainview");
 	    menuview = new MenuView(this);
+	    homeview = new HomeView();
 	    addComponent(menuview);
 	    content = new CssLayout();
 	    content.addStyleName("view-content");
 	    content.setSizeFull();
+	    content.addComponent(homeview);
 	    addComponent(content);
 	    setExpandRatio(content, 1);
 	}
@@ -32,6 +35,7 @@ public class MainView extends HorizontalLayout implements View {
 		if(dataset1 == (null)){
 			dataset1 = new Dataset1View();
 			content.addComponent(dataset1);
+			homeview.setVisible(false);
 			dataset1.setVisible(true);
 		}
 		if(dataset2 != null){
@@ -40,6 +44,7 @@ public class MainView extends HorizontalLayout implements View {
 		if(dataset3 != null){
 			dataset3.setVisible(false);
 		}
+		homeview.setVisible(false);
 		dataset1.setVisible(true);
 	}
 	
@@ -47,6 +52,7 @@ public class MainView extends HorizontalLayout implements View {
 		if(dataset2 == (null)){
 			dataset2 = new Dataset2View();
 			content.addComponent(dataset2);
+			homeview.setVisible(false);
 			dataset2.setVisible(true);
 		}
 		if(dataset1 != null){
@@ -55,6 +61,7 @@ public class MainView extends HorizontalLayout implements View {
 		if(dataset3 != null){
 			dataset3.setVisible(false);
 		}
+		homeview.setVisible(false);
 		dataset2.setVisible(true);
 	}
 	
@@ -62,6 +69,7 @@ public class MainView extends HorizontalLayout implements View {
 		if(dataset3 == (null)){
 			dataset3 = new Dataset3View();
 			content.addComponent(dataset3);
+			homeview.setVisible(false);
 			dataset3.setVisible(true);
 		}
 		if(dataset1 != null){
@@ -70,10 +78,23 @@ public class MainView extends HorizontalLayout implements View {
 		if(dataset2 != null){
 			dataset2.setVisible(false);
 		}
+		homeview.setVisible(false);
 		dataset3.setVisible(true);
 	}
 	
-	
+	public void goToHome(){
+		if(dataset1 != null){
+			dataset1.setVisible(false);
+		}
+		if(dataset2 != null){
+			dataset2.setVisible(false);
+		}
+		if(dataset3 != null){
+			dataset3.setVisible(false);
+		}
+		homeview.setVisible(true);
+	}
+
 	@Override
 	public void enter(ViewChangeEvent event) {
 		// TODO Auto-generated method stub
