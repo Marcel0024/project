@@ -21,6 +21,7 @@ import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Responsive;
+import com.vaadin.server.VaadinService;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -177,7 +178,7 @@ public class Dataset1View extends VerticalLayout {
 		DateFormat dateFormatLong = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
 		DateFormat dateFormatShort = new SimpleDateFormat("dd_MM_yyy");
 		Date date = new Date();
-		String basepath = "C:\\Users\\Christopher\\git\\project\\WeatherWebApp\\WebContent\\WEB-INF\\docs\\" + dateFormatShort.format(date) +"\\";
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\" + dateFormatShort.format(date) +"\\";
 		String file = dateFormatLong.format(date) + ".csv";
 		
 		CsvWriter writer = new CsvWriter(basepath , file);

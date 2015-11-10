@@ -20,6 +20,9 @@
 		<!-- Vaadin addon charts -->
 		<dependency org="com.vaadin.addon" name="vaadin-charts" rev="3.0.0-alpha7" conf="default->default" />
 		
+		<!-- Vaadin Google Maps -->
+		<dependency org="com.vaadin.tapio" name="googlemaps" rev="1.1.2" conf="default->default" />
+		
 		<!-- The core server part of Vaadin -->
 		<dependency org="com.vaadin" name="vaadin-server" rev="&vaadin.version;" />
 

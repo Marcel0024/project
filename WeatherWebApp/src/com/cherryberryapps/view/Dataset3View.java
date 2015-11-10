@@ -2,6 +2,7 @@ package com.cherryberryapps.view;
 
 import com.cherryberryapps.model.DBConnection;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 @SuppressWarnings("serial")
@@ -11,7 +12,7 @@ public class Dataset3View extends VerticalLayout {
 	
 	public Dataset3View() {
 		connection = new DBConnection();
-    	String[][] values = connection.getDataset1();
+		
 		setSizeFull();
 		addComponent(buildHeader());
 		
@@ -24,18 +25,21 @@ public class Dataset3View extends VerticalLayout {
 	}
 
 	private Component buildFooter() {
+		VerticalLayout header = new VerticalLayout();
 		
-		return null;
+		return header;
 	}
 
 	private Component buildBody() {
+		HorizontalLayout body = new HorizontalLayout();
 		
-		return null;
+		return body;
 	}
 
 	private Component buildHeader() {
+		HorizontalLayout footer = new HorizontalLayout();
 		
-		return null;
+		return footer;
 	}
 
 }
