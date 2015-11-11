@@ -1,6 +1,7 @@
 package com.cherryberryapps.view;
 
 import java.io.File;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,7 +69,6 @@ public class Dataset3View extends VerticalLayout {
         Responsive.makeResponsive(header);
         
         Label title = new Label("Europe map");
-        
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
@@ -98,6 +98,18 @@ public class Dataset3View extends VerticalLayout {
 		
 		return body;
 	}
+	
+	private Component buildFooter() {
+		HorizontalLayout footer = new HorizontalLayout();
+	    footer.addStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
+	    footer.setSpacing(true);
+	    footer.setMargin(true);
+	    Responsive.makeResponsive(footer);
+		
+	    footer.addComponent(buildDownloadButton());
+	    
+		return footer;
+	}
 
 	private Component buildGoogleMaps() {
 		GoogleMap googleMap = new GoogleMap(null, null, null);
@@ -126,10 +138,13 @@ public class Dataset3View extends VerticalLayout {
 				subWindow.center();
 				subWindow.setWidth("50%");
 				subWindow.setHeight("50%");
+				subWindow.setResizable(false);
+				subWindow.setResponsive(true);
 				
 				VerticalLayout subContent = new VerticalLayout();
 		        subContent.setMargin(true);
 		        subContent.addComponent(buildChart(clickedMarker.getCaption()));
+		        subContent.addComponent(buildDownloadButton());
 		        
 		        subWindow.setContent(subContent);		        
 		        window.addWindow(subWindow);
@@ -138,54 +153,7 @@ public class Dataset3View extends VerticalLayout {
         
         return googleMap;
 	}
-
-	protected Component buildChart(String caption) {
-		
-		ArrayList<ArrayList<Object>> dataSeriesItems = connection.getDataForHumidity(caption);
-		calulateHumidity(dataSeriesItems);
-		Chart chart = new Chart(ChartType.LINE);
-		chart.setSizeFull();
-		
-		DataSeries dataSeries = new DataSeries();
-		
-		//Configuration
-		Configuration conf = chart.getConfiguration();
-		conf.setTitle(caption);
-		conf.getLegend().setEnabled(false);
-		conf.getChart().setBackgroundColor(new SolidColor(255,255,255,0));
-		
-		//XAxis
-		XAxis xaxis = new XAxis();
-		xaxis.setTitle("Humidity");
-		//xaxis.setCategories(values[0][0]);
-		conf.addxAxis(xaxis);
-		
-		//YAxis
-		YAxis yaxis = new YAxis();
-		yaxis.setTitle("Time");
-		conf.addyAxis(yaxis);
-		
-		for (int i = 0; i < dataSeriesItems.size(); i++) {
-			dataSeries.add(new DataSeriesItem((String)dataSeriesItems.get(i).get(2), (double) dataSeriesItems.get(i).get(3)));
-		}
-		
-		conf.addSeries(dataSeries);
-		
-		return chart;
-	}
-
-	private void calulateHumidity(ArrayList<ArrayList<Object>> dataSeriesItems) {
-		double temperature;
-		double dewPoint;
-		for (int i = 0; i < dataSeriesItems.size(); i++) {
-			//100*(EXP((17.625*TD)/(243.04+TD))/EXP((17.625*T)/(243.04+T))) 
-			temperature = (double) dataSeriesItems.get(i).get(0);
-			dewPoint = (double) dataSeriesItems.get(i).get(1);
-			dataSeriesItems.get(i).add(100*(Math.exp((17.625*dewPoint)/(243.04+dewPoint))/Math.exp((17.625*temperature)/(243.04+temperature))));
-		}
-		
-	}
-
+	
 	private void addStations(GoogleMap googleMap, String country) {
 		
 		ArrayList<ArrayList<String>> stations = connection.getStationsInCountry(country);
@@ -200,16 +168,64 @@ public class Dataset3View extends VerticalLayout {
 		
 	}
 
-	private Component buildFooter() {
-		HorizontalLayout footer = new HorizontalLayout();
-	    footer.addStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
-	    footer.setSpacing(true);
-	    footer.setMargin(true);
-	    Responsive.makeResponsive(footer);
+	protected Component buildChart(String caption) {
 		
-	    footer.addComponent(buildDownloadButton());
-	    
-		return footer;
+		ArrayList<ArrayList<Object>> dataSeriesItems = connection.getDataForHumidity(caption);
+		calulateHumidity(dataSeriesItems);
+		
+		if (dataSeriesItems.size() == 0) {
+			 Label title = new Label(caption + ": No data to be displayed");
+			 title.setSizeUndefined();
+			 title.addStyleName(ValoTheme.LABEL_H1);
+			 title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
+			 
+			 return title;
+		}
+		
+		Chart chart = new Chart(ChartType.LINE);
+		chart.setSizeFull();
+		
+		DataSeries dataSeries = new DataSeries();
+		
+		//Configuration
+		Configuration conf = chart.getConfiguration();
+		conf.setTitle(caption);
+		conf.getLegend().setEnabled(false);
+		conf.getChart().setBackgroundColor(new SolidColor(255,255,255,0));
+		
+		//XAxis
+		XAxis xaxis = new XAxis();
+		xaxis.setTitle("Time");
+		xaxis.setCategories((String)dataSeriesItems.get(0).get(2));
+		conf.addxAxis(xaxis);
+		
+		//YAxis
+		YAxis yaxis = new YAxis();
+		yaxis.setTitle("Humidity");
+		conf.addyAxis(yaxis);
+		
+		
+		for (int i = 0; i < dataSeriesItems.size(); i++) {
+			dataSeries.add(new DataSeriesItem((String)dataSeriesItems.get(i).get(2), (double) dataSeriesItems.get(i).get(3)));
+		}
+		
+		conf.addSeries(dataSeries);
+		
+		return chart;
+	}
+
+	private void calulateHumidity(ArrayList<ArrayList<Object>> dataSeriesItems) {
+		double temperature;
+		double dewPoint;
+		double humidity;
+		for (int i = 0; i < dataSeriesItems.size(); i++) {
+			//100*(EXP((17.625*TD)/(243.04+TD))/EXP((17.625*T)/(243.04+T))) 
+			temperature = (double) dataSeriesItems.get(i).get(0);
+			dewPoint = (double) dataSeriesItems.get(i).get(1);
+			humidity = 100*(Math.exp((17.625*dewPoint)/(243.04+dewPoint))/Math.exp((17.625*temperature)/(243.04+temperature)));
+			dataSeriesItems.get(i).add((double) Math.round(humidity * 100)  / 100);
+		}
+		
 	}
 
 	private Component buildDownloadButton() {

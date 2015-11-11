@@ -251,7 +251,7 @@ public class DBConnection {
 				dataSeriesItems.add(index, new ArrayList<Object>());
 				dataSeriesItems.get(index).add(resultSet.getDouble(1));
 				dataSeriesItems.get(index).add(resultSet.getDouble(2));
-				dataSeriesItems.get(index).add(resultSet.getDate(3));
+				dataSeriesItems.get(index).add(resultSet.getString(3).substring(0, 8));
 				index++;
 			}
 		} catch (SQLException e) {
