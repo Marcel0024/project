@@ -2,7 +2,6 @@ package com.cherryberryapps.view;
 
 import java.io.File;
 
-import com.vaadin.client.ui.ImageIcon;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
@@ -17,7 +16,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.themes.ValoTheme;
 
 public class MenuView extends CustomComponent{
@@ -26,7 +24,6 @@ public class MenuView extends CustomComponent{
 	String basepath;
 	MainView mainview;
 
-	@SuppressWarnings("serial")
 	public MenuView(MainView mainview){
 		this.mainview = mainview;
 		setPrimaryStyleName("valo-menu");
@@ -42,9 +39,12 @@ public class MenuView extends CustomComponent{
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
         
+        Component companylogo = buildCompanyLogo();
+        
         menuContent.addComponent(buildTitle());
         menuContent.addComponent(buildProfile());
         menuContent.addComponent(buildMenuItems());
+        menuContent.addComponent(companylogo);
 		
         setCompositionRoot(menuContent);
 		
@@ -58,6 +58,15 @@ public class MenuView extends CustomComponent{
         logoWrapper.setComponentAlignment(logo, Alignment.MIDDLE_CENTER);
         logoWrapper.addStyleName("valo-menu-title");
         return logoWrapper;
+    }
+    
+    private Component buildCompanyLogo(){
+    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/logo.png"));
+    	Label icon = new Label();
+    	icon.setIcon(resource);
+		HorizontalLayout logowrap = new HorizontalLayout(icon);
+		
+    	return logowrap;
     }
     
     
@@ -102,7 +111,6 @@ public class MenuView extends CustomComponent{
 			
 			@Override
 			public void componentEvent(Event event) {
-				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
 					mainview.goToSet1();
 				}
@@ -116,7 +124,6 @@ public class MenuView extends CustomComponent{
 			
 			@Override
 			public void componentEvent(Event event) {
-				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
 					mainview.goToSet2();
 				}
@@ -130,7 +137,6 @@ public class MenuView extends CustomComponent{
 			
 			@Override
 			public void componentEvent(Event event) {
-				// TODO Auto-generated method stub
 				if (event.getClass() == Button.ClickEvent.class) {
 					mainview.goToSet3();
 				}
