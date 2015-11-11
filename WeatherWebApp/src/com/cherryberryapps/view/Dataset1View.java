@@ -59,13 +59,13 @@ public class Dataset1View extends VerticalLayout {
         header.setMargin(true);
         Responsive.makeResponsive(header);
         
-        Label title = new Label("10 clodest countries in Europe");
+        Label title = new Label("10 coldest countries in Europe");
         
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         
-        Label description = new Label("A list of the 10 coldest contries in Europe. Countries are wind chill corrected.");
+        Label description = new Label("A list of the 10 coldest contries in Europe. The temperature are wind chill corrected.");
         description.setSizeUndefined();
         description.addStyleName(ValoTheme.LABEL_H3);
         description.addStyleName(ValoTheme.LABEL_NO_MARGIN);
