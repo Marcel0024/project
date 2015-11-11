@@ -23,6 +23,9 @@
 		<!-- Vaadin Google Maps -->
 		<dependency org="com.vaadin.tapio" name="googlemaps" rev="1.1.2" conf="default->default" />
 		
+		<!-- Vaadin Server Push -->
+		<dependency org="com.vaadin" name="vaadin-push" rev="&vaadin.version;" conf="default->default"/>
+		
 		<!-- The core server part of Vaadin -->
 		<dependency org="com.vaadin" name="vaadin-server" rev="&vaadin.version;" />
 
