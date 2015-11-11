@@ -31,7 +31,7 @@ public class WeatherwebappUI extends UI {
 		setTheme("valo");
 		getPage().setTitle("Aruba Networks");
 		addStyleName(ValoTheme.UI_WITH_MENU);
-		MainView mainview = new MainView();
+		MainView mainview = new MainView(this);
 		navigator = new Navigator(this,this);
 		navigator.addView("login", new LoginView());
 		navigator.addView("main", mainview);

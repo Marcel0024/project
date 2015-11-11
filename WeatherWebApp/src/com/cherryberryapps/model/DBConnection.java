@@ -197,10 +197,69 @@ public class DBConnection {
 		return returnValue;
 	}
 
-	public ArrayList<ArrayList<String>> getStationsInEurope() {
+	public ArrayList<String> getCountriesInEurope(double lat, double lon) {
+		ArrayList<String> countries = new ArrayList<String>();
+		double range = 0.50;
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT * FROM stations WHERE (latitude BETWEEN "+ (lat - range) +" AND "+ (lat + range) +") AND (longitude BETWEEN "+ (lon - range) +" AND "+ (lon + range) +") AND continent= 'Europe'");
+			while (resultSet.next()) {
+					countries.add(resultSet.getString(3));
+			}
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return countries;
+	}
+	
+	public ArrayList<ArrayList<String>> getStationsInCountry(String country) {
 		ArrayList<ArrayList<String>> stations = new ArrayList<ArrayList<String>>();
 		
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT * FROM stations WHERE country = '"+ country +"' AND continent= 'Europe'");
+			int index = 0;
+			while (resultSet.next()) {
+					stations.add(index, new ArrayList<String>());
+					stations.get(index).add(resultSet.getString(1));
+					stations.get(index).add(resultSet.getString(2));
+					stations.get(index).add(resultSet.getString(3));
+					stations.get(index).add(resultSet.getString(4));
+					stations.get(index).add(resultSet.getString(5));
+					stations.get(index).add(resultSet.getString(6));
+					stations.get(index).add(resultSet.getString(7));
+					index++;
+			}
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		return stations;
 	}
+
+	public ArrayList<ArrayList<Object>> getDataForHumidity(String caption) {
+		ArrayList<ArrayList<Object>> dataSeriesItems = new ArrayList<ArrayList<Object>>();
+		
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn AND stations.name = '"+ caption +"'");
+			int index = 0;
+			while (resultSet.next()) {
+				dataSeriesItems.add(index, new ArrayList<Object>());
+				dataSeriesItems.get(index).add(resultSet.getDouble(1));
+				dataSeriesItems.get(index).add(resultSet.getDouble(2));
+				dataSeriesItems.get(index).add(resultSet.getDate(3));
+				index++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dataSeriesItems;
+	}
+
+	
 }

@@ -6,6 +6,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
 public class MainView extends HorizontalLayout implements View {
@@ -16,8 +17,10 @@ public class MainView extends HorizontalLayout implements View {
 	Dataset2View dataset2;
 	Dataset3View dataset3;
 	HomeView homeview;
+	UI window;
 	
-	public MainView(){
+	public MainView(UI window){
+		this.window = window;
 		setSizeFull();
 	    addStyleName("mainview");
 	    menuview = new MenuView(this);
@@ -67,7 +70,7 @@ public class MainView extends HorizontalLayout implements View {
 	
 	public void goToSet3(){
 		if(dataset3 == (null)){
-			dataset3 = new Dataset3View();
+			dataset3 = new Dataset3View(window);
 			content.addComponent(dataset3);
 			homeview.setVisible(false);
 			dataset3.setVisible(true);
