@@ -260,6 +260,29 @@ public class DBConnection {
 		
 		return dataSeriesItems;
 	}
+	
+	public String[] getDataset2(){
+		String[] dataSeries = new String[10];
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT ROUND(AVG(rainfall),2) AS average, stations.country AS country "
+					+ "FROM measurements,stations "
+					+ "WHERE measurements.station = stations.stn "
+					+ "AND measurements.date between DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() "
+					+ "GROUP BY stations.country "
+					+ "ORDER BY average DESC LIMIT 5");
+			int index = 0;
+			while(resultSet.next()){
+				dataSeries[index] = resultSet.getString("average");
+				index++;
+				dataSeries[index] = resultSet.getString("country");
+				index++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dataSeries;
+	}
 
 	
 }
