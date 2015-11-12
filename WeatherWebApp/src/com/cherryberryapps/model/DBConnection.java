@@ -284,22 +284,29 @@ public class DBConnection {
 		return dataSeries;
 	}
 	
-	public String[] getDataset2data(){
-		String[] dataSeries = new String[10];
+	public String[] getDataset2data(String country){
+		String[] dataSeries = new String[7];
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT ROUND(AVG(rainfall),2) AS average, stations.country AS country "
-					+ "FROM measurements,stations "
+			int counter = 1;
+			for(int index = 0; index < 7; index++){
+				resultSet = statement.executeQuery("SELECT ROUND(AVG(measurements.rainfall),2) AS average "
+					+ "FROM measurements, stations "
 					+ "WHERE measurements.station = stations.stn "
-					+ "AND measurements.date between DATE_SUB(NOW(),INTERVAL 1 WEEK) AND NOW() "
-					+ "GROUP BY stations.country "
-					+ "ORDER BY average DESC LIMIT 5");
-			int index = 0;
-			while(resultSet.next()){
-				dataSeries[index] = resultSet.getString("average");
-				index++;
-				dataSeries[index] = resultSet.getString("country");
-				index++;
+					+ "AND  measurements.time > (current_time() - INTERVAL "+counter+" HOUR) "
+					+ "AND stations.country = '"+country+"'");
+				boolean validData = resultSet.next();
+				if(validData){
+					if(resultSet.getString("average") != null){
+						dataSeries[index] = resultSet.getString("average");
+					}else {
+						dataSeries[index] = "0";
+					}	
+				}
+				if(validData == false){
+					dataSeries[index] = "0";
+				}
+				counter++;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

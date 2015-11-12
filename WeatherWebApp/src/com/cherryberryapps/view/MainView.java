@@ -53,7 +53,7 @@ public class MainView extends HorizontalLayout implements View {
 	
 	public void goToSet2(){
 		if(dataset2 == (null)){
-			dataset2 = new Dataset2View();
+			dataset2 = new Dataset2View(window);
 			content.addComponent(dataset2);
 			homeview.setVisible(false);
 			dataset2.setVisible(true);
