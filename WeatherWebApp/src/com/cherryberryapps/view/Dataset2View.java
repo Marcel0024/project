@@ -31,14 +31,18 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class Dataset2View extends VerticalLayout{
 
 	private DBConnection connection;
-	public Dataset2View(){
+	private UI window;
+	public Dataset2View(UI window){
+		this.window = window;
 		connection = new DBConnection();
 		String[] values = connection.getDataset2();
 		 addStyleName(ValoTheme.PANEL_BORDERLESS);
@@ -109,41 +113,59 @@ public class Dataset2View extends VerticalLayout{
 		table.setStyleName(ValoTheme.TABLE_BORDERLESS);
 		table.setStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
 		table.setStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
+		String[] countrys = new String[10];
 		
 		int x = 0;
 		for (int i = 0; i < 10; i++) {
 			x = (i+1);
 			table.addItem(new Object[]{values[x], (double) Math.round(Double.parseDouble(values[i])* 100) / 100}, null);
+			countrys[i] = values[x];
 			i++;
 		}
+		countrys[0] = values[1];
+		countrys[1] = values[3];
+		countrys[2] = values[5];
+		countrys[3] = values[7];
+		countrys[4] = values[9];
 		
 		table.addItemClickListener(new ItemClickListener() {
 			
 			@Override
 			public void itemClick(ItemClickEvent event) {
-				/*StringBuilder description = new StringBuilder();
-				String coutry = values[(int) event.getItemId() -1][0];
-				String[][] data = connection.getDataset1Data(coutry); 
+				Window subWindow = new Window();
+				subWindow.center();
+				subWindow.setSizeUndefined();
+				subWindow.setResizable(false);
+				subWindow.setResponsive(true);
 				
-				for (String[] value: data) {
-					if (value[0] != null) {
-						description.append(value[0]);
-						description.append(" | ");
-						description.append((double) Math.round(Double.parseDouble(value[1])* 100) / 100);
-						description.append(" °C");
-						description.append('\n');
-					}
-				}
-				
-				Notification notification = new Notification(coutry);
-	        	notification.setDescription(description.toString());
-	    		notification.setHtmlContentAllowed(false);
-	            notification.setStyleName("tray dark small closable login-help");
-	            notification.setPosition(Position.MIDDLE_CENTER);
-	            notification.setDelayMsec(60000);
-	            notification.show(Page.getCurrent());*/
+				VerticalLayout subContent = new VerticalLayout();
+		        subContent.setMargin(true);
+		        
+		        subContent.addComponent(buildSubTable(countrys[((int) event.getItemId()) -1]));
+		        //event.getItem().toString())
+		        subWindow.setContent(subContent);
+		        
+		        window.addWindow(subWindow);
 			}
 		});
+		
+		return table;
+	}
+	
+	private Component buildSubTable(String country) {
+		String[] data = connection.getDataset2data(country); 
+		
+		Table table = new Table();
+		table.addContainerProperty("Time", String.class, null);
+		table.addContainerProperty("Rainfall in Cm",  Double.class, null);
+		table.setPageLength(table.size());
+		table.setStyleName(ValoTheme.TABLE_BORDERLESS);
+		table.setStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
+		table.setStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
+		
+		for (int i = 0; i < 7;i++) {
+			table.addItem(new Object[]{i+1 + " Hours ago", (double) Double.parseDouble(data[i])}, null);
+		}
 		
 		return table;
 	}
