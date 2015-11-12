@@ -1,7 +1,6 @@
 package com.cherryberryapps.view;
 
 import java.io.File;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,13 +17,13 @@ import com.vaadin.addon.charts.model.DataSeriesItem;
 import com.vaadin.addon.charts.model.XAxis;
 import com.vaadin.addon.charts.model.YAxis;
 import com.vaadin.addon.charts.model.style.SolidColor;
+import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.Position;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
@@ -38,6 +37,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseEvent;
+import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
@@ -45,6 +46,10 @@ public class Dataset3View extends VerticalLayout {
 	
 	private UI window;
 	private DBConnection connection;	
+	private HorizontalLayout footer;
+	private DataSeries dataSeries;
+	private boolean update;
+	int count = 0;
 	
 	public Dataset3View(UI window) {
 		this.window = window;
@@ -100,13 +105,11 @@ public class Dataset3View extends VerticalLayout {
 	}
 	
 	private Component buildFooter() {
-		HorizontalLayout footer = new HorizontalLayout();
+		footer = new HorizontalLayout();
 	    footer.addStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
 	    footer.setSpacing(true);
 	    footer.setMargin(true);
 	    Responsive.makeResponsive(footer);
-		
-	    footer.addComponent(buildDownloadButton());
 	    
 		return footer;
 	}
@@ -122,10 +125,12 @@ public class Dataset3View extends VerticalLayout {
 			@Override
 			public void mapClicked(LatLon position) {
 				googleMap.clearMarkers();
+				footer.removeAllComponents();
 				ArrayList<String> countries = connection.getCountriesInEurope(position.getLat(), position.getLon());
 				Iterator<String> it = countries.iterator();
 				while (it.hasNext()) {
 					addStations(googleMap, it.next());
+					//footer.addComponent(buildDownloadButton(it.next()));
 				} 
 			}
 
@@ -144,16 +149,33 @@ public class Dataset3View extends VerticalLayout {
 				VerticalLayout subContent = new VerticalLayout();
 		        subContent.setMargin(true);
 		        subContent.addComponent(buildChart(clickedMarker.getCaption()));
-		        subContent.addComponent(buildDownloadButton());
 		        
-		        subWindow.setContent(subContent);		        
+		        subWindow.setContent(subContent);
+		        subWindow.addCloseListener(new CloseListener() {
+					
+					@Override
+					public void windowClose(CloseEvent e) {
+						update = false;
+					}
+				});
+		        
 		        window.addWindow(subWindow);
+		        
+		        new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						update = true;
+						updateChart(clickedMarker.getCaption());
+						
+					}
+				}).start();
 			}
 		});
         
         return googleMap;
 	}
-	
+
 	private void addStations(GoogleMap googleMap, String country) {
 		
 		ArrayList<ArrayList<String>> stations = connection.getStationsInCountry(country);
@@ -165,27 +187,17 @@ public class Dataset3View extends VerticalLayout {
 			new GoogleMapInfoWindow(stations.get(i).get(0), marker);
 			googleMap.addMarker(marker);
 		}
-		
 	}
 
 	protected Component buildChart(String caption) {
 		
 		ArrayList<ArrayList<Object>> dataSeriesItems = connection.getDataForHumidity(caption);
 		calulateHumidity(dataSeriesItems);
-		
-		if (dataSeriesItems.size() == 0) {
-			 Label title = new Label(caption + ": No data to be displayed");
-			 title.setSizeUndefined();
-			 title.addStyleName(ValoTheme.LABEL_H1);
-			 title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
-			 
-			 return title;
-		}
-		
+			
 		Chart chart = new Chart(ChartType.LINE);
 		chart.setSizeFull();
 		
-		DataSeries dataSeries = new DataSeries();
+		dataSeries = new DataSeries();
 		
 		//Configuration
 		Configuration conf = chart.getConfiguration();
@@ -203,15 +215,38 @@ public class Dataset3View extends VerticalLayout {
 		YAxis yaxis = new YAxis();
 		yaxis.setTitle("Humidity");
 		conf.addyAxis(yaxis);
-		
+
+		conf.addSeries(dataSeries);
 		
 		for (int i = 0; i < dataSeriesItems.size(); i++) {
 			dataSeries.add(new DataSeriesItem((String)dataSeriesItems.get(i).get(2), (double) dataSeriesItems.get(i).get(3)));
 		}
 		
-		conf.addSeries(dataSeries);
-		
 		return chart;
+	}
+	
+	private void updateChart(String caption) {
+		
+		while (update) {
+			try {
+				Thread.sleep(10000);
+				UI.getCurrent().access(new Runnable() {
+					
+					@Override
+					public void run() {							
+						ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForHumidity(caption);
+						calulateHumidity(dataSeriesItems);
+						
+						for (int i = 0; i < dataSeriesItems.size(); i++) {
+							dataSeries.add(new DataSeriesItem((String)dataSeriesItems.get(i).get(2), (double) dataSeriesItems.get(i).get(3)));
+						}
+					}
+				});
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}
 	}
 
 	private void calulateHumidity(ArrayList<ArrayList<Object>> dataSeriesItems) {
@@ -219,16 +254,14 @@ public class Dataset3View extends VerticalLayout {
 		double dewPoint;
 		double humidity;
 		for (int i = 0; i < dataSeriesItems.size(); i++) {
-			//100*(EXP((17.625*TD)/(243.04+TD))/EXP((17.625*T)/(243.04+T))) 
 			temperature = (double) dataSeriesItems.get(i).get(0);
 			dewPoint = (double) dataSeriesItems.get(i).get(1);
 			humidity = 100*(Math.exp((17.625*dewPoint)/(243.04+dewPoint))/Math.exp((17.625*temperature)/(243.04+temperature)));
 			dataSeriesItems.get(i).add((double) Math.round(humidity * 100)  / 100);
 		}
-		
 	}
 
-	private Component buildDownloadButton() {
+	private Component buildDownloadButton(String country) {
 		DateFormat dateFormatLong = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
 		DateFormat dateFormatShort = new SimpleDateFormat("dd_MM_yyy");
 		Date date = new Date();
@@ -244,5 +277,4 @@ public class Dataset3View extends VerticalLayout {
 		
 		return downloadButton;
 	}
-
 }

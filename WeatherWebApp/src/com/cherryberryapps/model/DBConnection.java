@@ -154,7 +154,7 @@ public class DBConnection {
 		return false;
 	}
 
-	public synchronized String [][] getDataset1() {
+	public synchronized String [][] getWindChillTemperatureInEurope() {
 		String[][] returnValue = new String [10][2];
 		int column;
 		int row = 0;
@@ -176,7 +176,7 @@ public class DBConnection {
 		return returnValue;
 	}
 
-	public synchronized String[][] getDataset1Data(String country) {
+	public synchronized String[][] getWindChillTemperatureInCountry(String country) {
 		String[][] returnValue = new String [8][2];
 		int column;
 		int row = 0;
