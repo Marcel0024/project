@@ -19,28 +19,29 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class Dataset1View extends VerticalLayout {
 	
+	private UI window;
 	private DBConnection connection;
 		
-	public Dataset1View() {
+	public Dataset1View(UI window) {
+		this.window = window;
 		connection = new DBConnection();
-    	String[][] values = connection.getDataset1();
+    	String[][] values = connection.getWindChillTemperatureInEurope();
 		setSizeFull();
 		addComponent(buildHeader());
 		
@@ -65,7 +66,7 @@ public class Dataset1View extends VerticalLayout {
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
         
-        Label description = new Label("A list of the 10 coldest contries in Europe. The temperature are wind chill corrected.");
+        Label description = new Label("A list of the 10 coldest contries in Europe. The temperatures are wind chill corrected.");
         description.setSizeUndefined();
         description.addStyleName(ValoTheme.LABEL_H3);
         description.addStyleName(ValoTheme.LABEL_NO_MARGIN);
@@ -112,7 +113,7 @@ public class Dataset1View extends VerticalLayout {
 	private Component buildTable(String[][] values) {
 		Table table = new Table();
 		table.addContainerProperty("Country", String.class, null);
-		table.addContainerProperty("Temperature",  Double.class, null);
+		table.addContainerProperty("Temperature in °C",  Double.class, null);
 		table.setPageLength(table.size());
 		table.setStyleName(ValoTheme.TABLE_BORDERLESS);
 		table.setStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
@@ -126,29 +127,42 @@ public class Dataset1View extends VerticalLayout {
 			
 			@Override
 			public void itemClick(ItemClickEvent event) {
-				StringBuilder description = new StringBuilder();
-				String coutry = values[(int) event.getItemId() -1][0];
-				String[][] data = connection.getDataset1Data(coutry); 
+				Window subWindow = new Window();
+				subWindow.center();
+				subWindow.setSizeUndefined();
+				subWindow.setResizable(false);
+				subWindow.setResponsive(true);
 				
-				for (String[] value: data) {
-					if (value[0] != null) {
-						description.append(value[0]);
-						description.append(" | ");
-						description.append((double) Math.round(Double.parseDouble(value[1])* 100) / 100);
-						description.append(" °C");
-						description.append('\n');
-					}
-				}
-				
-				Notification notification = new Notification(coutry);
-	        	notification.setDescription(description.toString());
-	    		notification.setHtmlContentAllowed(false);
-	            notification.setStyleName("tray dark small closable login-help");
-	            notification.setPosition(Position.MIDDLE_CENTER);
-	            notification.setDelayMsec(60000);
-	            notification.show(Page.getCurrent());
+				VerticalLayout subContent = new VerticalLayout();
+		        subContent.setMargin(true);
+		        subContent.addComponent(buildSubTable(values[(int) event.getItemId() -1][0]));
+		        
+		        subWindow.setContent(subContent);
+		        
+		        window.addWindow(subWindow);
+			
 			}
 		});
+		
+		return table;
+	}
+
+	protected Component buildSubTable(String country) {
+		String[][] data = connection.getWindChillTemperatureInCountry(country); 
+		
+		Table table = new Table();
+		table.addContainerProperty("Time", String.class, null);
+		table.addContainerProperty("Temperature in °C",  Double.class, null);
+		table.setPageLength(table.size());
+		table.setStyleName(ValoTheme.TABLE_BORDERLESS);
+		table.setStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
+		table.setStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
+		
+		for (String[] value: data) {
+			if (value[0] != null) {
+				table.addItem(new Object[]{value[0], (double) Math.round(Double.parseDouble(value[1])* 100) / 100}, null);
+			}
+		}
 		
 		return table;
 	}

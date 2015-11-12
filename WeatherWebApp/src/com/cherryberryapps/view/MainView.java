@@ -11,13 +11,13 @@ import com.vaadin.ui.UI;
 @SuppressWarnings("serial")
 public class MainView extends HorizontalLayout implements View {
 
+	UI window;
 	ComponentContainer content;
 	MenuView menuview;
 	Dataset1View dataset1;
 	Dataset2View dataset2;
 	Dataset3View dataset3;
 	HomeView homeview;
-	UI window;
 	
 	public MainView(UI window){
 		this.window = window;
@@ -36,7 +36,7 @@ public class MainView extends HorizontalLayout implements View {
 
 	public void goToSet1(){
 		if(dataset1 == (null)){
-			dataset1 = new Dataset1View();
+			dataset1 = new Dataset1View(window);
 			content.addComponent(dataset1);
 			homeview.setVisible(false);
 			dataset1.setVisible(true);

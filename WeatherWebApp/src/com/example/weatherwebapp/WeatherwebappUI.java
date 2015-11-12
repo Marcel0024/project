@@ -7,6 +7,7 @@ import com.cherryberryapps.view.Dataset2View;
 import com.cherryberryapps.view.LoginView;
 import com.cherryberryapps.view.MainView;
 import com.cherryberryapps.view.MenuView;
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
@@ -18,8 +19,9 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 @Theme("weatherwebapp")
+@Push
 public class WeatherwebappUI extends UI {
-
+	
 	Navigator navigator;
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = WeatherwebappUI.class, widgetset = "com.example.weatherwebapp.widgetset.WeatherwebappWidgetset")
