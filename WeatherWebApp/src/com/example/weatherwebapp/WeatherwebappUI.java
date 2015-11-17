@@ -27,7 +27,15 @@ public class WeatherwebappUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest request) {
-		new WeatherServer();
+		//Start server
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				new WeatherServer();
+			}
+		}).start();
+		
 		setTheme("valo");
 		getPage().setTitle("Aruba Networks");
 		addStyleName(ValoTheme.UI_WITH_MENU);
