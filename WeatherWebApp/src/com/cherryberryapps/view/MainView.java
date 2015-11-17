@@ -24,7 +24,7 @@ public class MainView extends HorizontalLayout implements View {
 		setSizeFull();
 	    addStyleName("mainview");
 	    menuview = new MenuView(this);
-	    homeview = new HomeView();
+	    homeview = new HomeView(this);
 	    addComponent(menuview);
 	    content = new CssLayout();
 	    content.addStyleName("view-content");
@@ -100,8 +100,9 @@ public class MainView extends HorizontalLayout implements View {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		// TODO Auto-generated method stub
-		
+		if (getSession().getAttribute("user") == null || getSession().getAttribute("user") == "") {
+			UI.getCurrent().getNavigator().navigateTo("login");
+		}
 	}
 	
 

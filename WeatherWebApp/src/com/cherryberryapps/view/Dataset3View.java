@@ -1,13 +1,8 @@
 package com.cherryberryapps.view;
 
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
-import com.cherryberryapps.model.CsvWriter;
 import com.cherryberryapps.model.DBConnection;
 import com.vaadin.addon.charts.Chart;
 import com.vaadin.addon.charts.model.ChartType;
@@ -17,20 +12,13 @@ import com.vaadin.addon.charts.model.DataSeriesItem;
 import com.vaadin.addon.charts.model.XAxis;
 import com.vaadin.addon.charts.model.YAxis;
 import com.vaadin.addon.charts.model.style.SolidColor;
-import com.vaadin.event.MouseEvents.ClickEvent;
-import com.vaadin.event.MouseEvents.ClickListener;
-import com.vaadin.server.FileDownloader;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.Resource;
 import com.vaadin.server.Responsive;
-import com.vaadin.server.VaadinService;
 import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -130,7 +118,6 @@ public class Dataset3View extends VerticalLayout {
 				Iterator<String> it = countries.iterator();
 				while (it.hasNext()) {
 					addStations(googleMap, it.next());
-					//footer.addComponent(buildDownloadButton(it.next()));
 				} 
 			}
 
@@ -213,7 +200,7 @@ public class Dataset3View extends VerticalLayout {
 		
 		//YAxis
 		YAxis yaxis = new YAxis();
-		yaxis.setTitle("Humidity");
+		yaxis.setTitle("Humidity in percentage");
 		conf.addyAxis(yaxis);
 
 		conf.addSeries(dataSeries);
@@ -233,13 +220,15 @@ public class Dataset3View extends VerticalLayout {
 				UI.getCurrent().access(new Runnable() {
 					
 					@Override
-					public void run() {							
-						ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForHumidity(caption);
+					public void run() {	
+						dataSeries.add(new DataSeriesItem("Dummy", 80.0), false, true);
+						//window.push();
+						/*ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForHumidity(caption);
 						calulateHumidity(dataSeriesItems);
 						
 						for (int i = 0; i < dataSeriesItems.size(); i++) {
 							dataSeries.add(new DataSeriesItem((String)dataSeriesItems.get(i).get(2), (double) dataSeriesItems.get(i).get(3)));
-						}
+						}*/
 					}
 				});
 			} catch (InterruptedException e) {
@@ -259,22 +248,5 @@ public class Dataset3View extends VerticalLayout {
 			humidity = 100*(Math.exp((17.625*dewPoint)/(243.04+dewPoint))/Math.exp((17.625*temperature)/(243.04+temperature)));
 			dataSeriesItems.get(i).add((double) Math.round(humidity * 100)  / 100);
 		}
-	}
-
-	private Component buildDownloadButton(String country) {
-		DateFormat dateFormatLong = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
-		DateFormat dateFormatShort = new SimpleDateFormat("dd_MM_yyy");
-		Date date = new Date();
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\Dataset3" + dateFormatShort.format(date) +"\\";
-		String file = dateFormatLong.format(date) + ".csv";
-		
-		CsvWriter writer = new CsvWriter(basepath , file);
-		
-		Button downloadButton = new Button("Download measurements");
-		Resource res = new FileResource(new File(basepath + file));
-		FileDownloader fd = new FileDownloader(res);
-		fd.extend(downloadButton);
-		
-		return downloadButton;
 	}
 }

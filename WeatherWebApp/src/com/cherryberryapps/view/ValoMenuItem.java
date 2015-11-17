@@ -1,8 +1,6 @@
 package com.cherryberryapps.view;
 
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
 
 public class ValoMenuItem extends Button {
 

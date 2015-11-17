@@ -2,16 +2,13 @@ package com.example.weatherwebapp;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.cherryberryapps.view.Dataset1View;
-import com.cherryberryapps.view.Dataset2View;
+import com.cherryberryapps.model.WeatherServer;
 import com.cherryberryapps.view.LoginView;
 import com.cherryberryapps.view.MainView;
-import com.cherryberryapps.view.MenuView;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.navigator.View;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
@@ -24,12 +21,13 @@ public class WeatherwebappUI extends UI {
 	
 	Navigator navigator;
 	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = WeatherwebappUI.class, widgetset = "com.example.weatherwebapp.widgetset.WeatherwebappWidgetset")
+	@VaadinServletConfiguration(productionMode = true, ui = WeatherwebappUI.class, widgetset = "com.example.weatherwebapp.widgetset.WeatherwebappWidgetset")
 	public static class Servlet extends VaadinServlet {
 	}
 
 	@Override
 	protected void init(VaadinRequest request) {
+		new WeatherServer();
 		setTheme("valo");
 		getPage().setTitle("Aruba Networks");
 		addStyleName(ValoTheme.UI_WITH_MENU);
@@ -37,8 +35,6 @@ public class WeatherwebappUI extends UI {
 		navigator = new Navigator(this,this);
 		navigator.addView("login", new LoginView());
 		navigator.addView("main", mainview);
-		//navigator.addView("Dataset1", new Dataset1View());
-		//navigator.addView("Dataset2",new Dataset2View());
-		navigator.navigateTo("main");		
+		navigator.navigateTo("login");		
 	}	
 }

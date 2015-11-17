@@ -14,6 +14,7 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Component.Event;
 import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
@@ -39,12 +40,9 @@ public class MenuView extends CustomComponent{
         menuContent.setWidth(null);
         menuContent.setHeight("100%");
         
-        Component companylogo = buildCompanyLogo();
-        
         menuContent.addComponent(buildTitle());
         menuContent.addComponent(buildProfile());
         menuContent.addComponent(buildMenuItems());
-        menuContent.addComponent(companylogo);
 		
         setCompositionRoot(menuContent);
 		
@@ -59,25 +57,15 @@ public class MenuView extends CustomComponent{
         logoWrapper.addStyleName("valo-menu-title");
         return logoWrapper;
     }
-    
-    private Component buildCompanyLogo(){
-    	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/logo.png"));
-    	Label icon = new Label();
-    	icon.setIcon(resource);
-		HorizontalLayout logowrap = new HorizontalLayout(icon);
-		
-    	return logowrap;
-    }
-    
-    
+        
     @SuppressWarnings("serial")
 	private Component buildProfile(){
 		MenuBar logowrap = new MenuBar();
     	logowrap.addStyleName("user-menu");
     	FileResource resource = new FileResource(new File(basepath + "/WEB-INF/lib/aruba-logo.jpg"));
     	MenuItem logoitem = logowrap.addItem("",resource,null);
-    	MenuItem home = logoitem.addItem("Home",null,null);
-    	MenuItem logout = logoitem.addItem("Logout",null,null);
+    	/*MenuItem home = logoitem.addItem("Home",null,null);
+    	MenuItem logout = logoitem.addItem("Log out",null,null);
     	
     	MenuBar.Command homecommand = new MenuBar.Command() {
     	    public void menuSelected(MenuItem selectedItem) {
@@ -87,9 +75,10 @@ public class MenuView extends CustomComponent{
     	MenuBar.Command logoutcommand = new MenuBar.Command() {
     	    public void menuSelected(MenuItem selectedItem) {
     	       UI.getCurrent().getNavigator().navigateTo("login");
+    	       getSession().close();
     	}};
     	home.setCommand(homecommand);
-    	logout.setCommand(logoutcommand);
+    	logout.setCommand(logoutcommand);*/
     	
     	return logowrap;
     }
@@ -105,8 +94,21 @@ public class MenuView extends CustomComponent{
 	private Component buildMenuItems(){
     	CssLayout menuItemsLayout = new CssLayout();
         menuItemsLayout.addStyleName("valo-menuitems");
-      
-        Component menuItemComponent1 = new ValoMenuItem("Dataset 1",1);
+        
+        Component home = new ValoMenuItem("Home",1);
+        home.addListener(new Listener() {
+			
+			@Override
+			public void componentEvent(Event event) {
+				if (event.getClass() == Button.ClickEvent.class) {
+					mainview.goToHome();
+				}
+			}
+		});
+        home = buildBadgeWrapper(home);
+        menuItemsLayout.addComponent(home);
+        
+        Component menuItemComponent1 = new ValoMenuItem("Coldest countries",2);
         menuItemComponent1.addListener(new Listener() {
 			
 			@Override
@@ -119,7 +121,7 @@ public class MenuView extends CustomComponent{
         menuItemComponent1 = buildBadgeWrapper(menuItemComponent1);
     	menuItemsLayout.addComponent(menuItemComponent1);
     	
-    	Component menuItemComponent2 = new ValoMenuItem("Dataset 2",2);
+    	Component menuItemComponent2 = new ValoMenuItem("Highest rainfall",3);
     	menuItemComponent2.addListener(new Listener() {
 			
 			@Override
@@ -132,7 +134,7 @@ public class MenuView extends CustomComponent{
         menuItemComponent2 = buildBadgeWrapper(menuItemComponent2);
     	menuItemsLayout.addComponent(menuItemComponent2);
     	
-    	Component menuItemComponent3 = new ValoMenuItem("Dataset 3",3);
+    	Component menuItemComponent3 = new ValoMenuItem("Humidity",4);
     	menuItemComponent3.addListener(new Listener() {
 			
 			@Override
@@ -144,7 +146,21 @@ public class MenuView extends CustomComponent{
 		});
         menuItemComponent3 = buildBadgeWrapper(menuItemComponent3);
     	menuItemsLayout.addComponent(menuItemComponent3);
-        
+    
+    	Component logout = new ValoMenuItem("Log out", 5);
+    	logout.addListener(new Listener() {
+			
+			@Override
+			public void componentEvent(Event event) {
+				if (event.getClass() == Button.ClickEvent.class) {
+					UI.getCurrent().getNavigator().navigateTo("login");
+		    	       //getSession().setAttribute("user", null);
+				}
+			}
+		});
+    	logout = buildBadgeWrapper(logout);
+    	menuItemsLayout.addComponent(logout);
+    	
         return menuItemsLayout;
     	
     }

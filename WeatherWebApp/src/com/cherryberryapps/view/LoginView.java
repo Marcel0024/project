@@ -12,7 +12,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -45,7 +44,7 @@ public class LoginView extends VerticalLayout implements View {
 
         loginPanel.addComponent(buildLabels());
         loginPanel.addComponent(buildFields());
-        loginPanel.addComponent(new CheckBox("Remember me", true));
+        
         return loginPanel;
     }
 
@@ -75,8 +74,7 @@ public class LoginView extends VerticalLayout implements View {
             public void buttonClick(final ClickEvent event) {
             	DBConnection connection = new DBConnection();
             	if (connection.isValidUser(username.getValue(), password.getValue())) {
-   
-                    getSession().setAttribute("user", username);
+                    getSession().setAttribute("user", username.getValue());
             		UI.getCurrent().getNavigator().navigateTo("main");
             	} else {
             		Notification notification = new Notification("Invalid username / password.");

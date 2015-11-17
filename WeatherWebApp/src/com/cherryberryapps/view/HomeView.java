@@ -2,6 +2,8 @@ package com.cherryberryapps.view;
 
 import java.io.File;
 
+import com.vaadin.event.MouseEvents.ClickEvent;
+import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
@@ -15,10 +17,13 @@ import com.vaadin.ui.themes.ValoTheme;
 
 @SuppressWarnings("serial")
 public class HomeView extends VerticalLayout {
-
+	
+	private MainView mainview;
+	private String user = "";
 	private String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-	public HomeView(){
-		
+	
+	public HomeView(MainView mainview){
+		this.mainview = mainview;
 		setSizeFull();
 	    
 	    addComponent(buildHeader());
@@ -26,6 +31,13 @@ public class HomeView extends VerticalLayout {
 	    Component body = buildBody();
 		addComponent(body);
         setExpandRatio(body, 1);
+        try {
+        	if (getSession().getAttribute("user") != null) {
+        		user = (String) getSession().getAttribute("user").toString();
+        	}
+        } catch (NullPointerException e) {
+        	
+        }
 	}
 	
 	private Component buildHeader() {
@@ -36,7 +48,7 @@ public class HomeView extends VerticalLayout {
         header.setMargin(true);
         Responsive.makeResponsive(header);
         
-        Label title = new Label("Welcome");
+        Label title = new Label("Welcome " + user );
         title.setSizeUndefined();
         title.addStyleName(ValoTheme.LABEL_H1);
         title.addStyleName(ValoTheme.LABEL_NO_MARGIN);
@@ -67,6 +79,14 @@ public class HomeView extends VerticalLayout {
         layoutDataset1.addComponent(imageDataset1);
         layoutDataset1.setSpacing(true);
         panelDataset1.setContent(layoutDataset1);
+        panelDataset1.addClickListener(new ClickListener() {
+			
+			@Override
+			public void click(ClickEvent event) {
+				mainview.goToSet1();
+			}
+		});
+        
         
         Panel panelDataset2 = new Panel(); 
         VerticalLayout layoutDataset2 = new VerticalLayout();
@@ -80,6 +100,13 @@ public class HomeView extends VerticalLayout {
         layoutDataset2.addComponent(imageDataset2);
         layoutDataset2.setSpacing(true);
         panelDataset2.setContent(layoutDataset2);
+        panelDataset2.addClickListener(new ClickListener() {
+			
+			@Override
+			public void click(ClickEvent event) {
+				mainview.goToSet2();
+			}
+		});
         
         Panel panelDataset3 = new Panel(); 
         VerticalLayout layoutDataset3 = new VerticalLayout();
@@ -93,6 +120,13 @@ public class HomeView extends VerticalLayout {
         layoutDataset3.addComponent(imageDataset3);
         layoutDataset3.setSpacing(true);
         panelDataset3.setContent(layoutDataset3);
+        panelDataset3.addClickListener(new ClickListener() {
+			
+			@Override
+			public void click(ClickEvent event) {
+				mainview.goToSet3();
+			}
+		});
         
         body.addComponent(panelDataset1);
         body.addComponent(panelDataset2);

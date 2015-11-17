@@ -205,7 +205,7 @@ public class Dataset1View extends VerticalLayout {
 		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\Dataset1" + dateFormatShort.format(date) +"\\";
 		String file = dateFormatLong.format(date) + ".csv";
 		
-		CsvWriter writer = new CsvWriter(basepath , file);
+		CsvWriter writer = new CsvWriter(basepath , file, "Country", "Temperature in °C");
 		for (String[] value: values) {
 			writer.write(value);
 		}		

@@ -9,13 +9,14 @@ import com.opencsv.CSVWriter;
 public class CsvWriter {
 
 	private CSVWriter writer;
-	private String[] columnNames = new String[]{"Country", "Temperature"};
+	private String[] columnNames;
 	
-	public CsvWriter(String directory, String fileName) {
+	public CsvWriter(String directory, String fileName, String columnName1, String columnName2) {
 		try {
 			File file = new File(directory);
 			file.mkdirs();
 			writer = new CSVWriter(new FileWriter(directory + fileName, true));
+			columnNames = new String[] {columnName1, columnName2};
 			printColumnNames(columnNames);
 		} catch (IOException e) {
 			e.printStackTrace();

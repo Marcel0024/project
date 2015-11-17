@@ -19,17 +19,13 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinService;
-import com.vaadin.shared.Position;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -57,6 +53,8 @@ public class Dataset2View extends VerticalLayout{
 		 Component body = buildBody(values);
 		 addComponent(body);
 	     setExpandRatio(body, 1);
+	     
+	     addComponent(buildFooter(values));
 	     
 	}
 	
@@ -108,7 +106,7 @@ public class Dataset2View extends VerticalLayout{
 	private Component buildTable(String[] values) {
 		Table table = new Table();
 		table.addContainerProperty("Country", String.class, null);
-		table.addContainerProperty("Rainfall",  Double.class, null);
+		table.addContainerProperty("Rainfall in centimeters",  Double.class, null);
 		table.setPageLength(table.size());
 		table.setStyleName(ValoTheme.TABLE_BORDERLESS);
 		table.setStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
@@ -192,7 +190,7 @@ public class Dataset2View extends VerticalLayout{
 		
 		//YAxis
 		YAxis yaxis = new YAxis();
-		yaxis.setTitle("Rainfall in cm");
+		yaxis.setTitle("Rainfall in centimeters");
 		conf.addyAxis(yaxis);
 		int x = 0;
 		for (int i = 0; i < 10;i++) {
@@ -212,28 +210,35 @@ public class Dataset2View extends VerticalLayout{
         footer.setMargin(true);
         Responsive.makeResponsive(footer);
         
-        //footer.addComponent(buildDownloadButton(values));
+        footer.addComponent(buildDownloadButton(values));
         
 		return footer;
 	}
 	
 	private Component buildDownloadButton(String[] values) {
-		/*DateFormat dateFormatLong = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+		DateFormat dateFormatLong = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
 		DateFormat dateFormatShort = new SimpleDateFormat("dd_MM_yyy");
 		Date date = new Date();
-		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\Dataset1" + dateFormatShort.format(date) +"\\";
+		String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath() + "\\WEB-INF\\docs\\Dataset2" + dateFormatShort.format(date) +"\\";
 		String file = dateFormatLong.format(date) + ".csv";
 		
-		CsvWriter writer = new CsvWriter(basepath , file);
-		for (String[] value: values) {
-			writer.write(value);
+		CsvWriter writer = new CsvWriter(basepath , file, "Country", "Rainfall in centimeters");
+		String[] entries = new String[2];
+		
+		int c = 0;
+		for (int i = 0; i < 5; i++) {
+			entries[1] = values[c];
+			c++;
+			entries[0] = values[c];
+			c++;
+			writer.write(entries);
 		}		
 		
 		Button downloadButton = new Button("Download measurements");
 		Resource res = new FileResource(new File(basepath + file));
 		FileDownloader fd = new FileDownloader(res);
 		fd.extend(downloadButton);
-		*/
-		return null;
+		
+		return downloadButton;
 	}
 }
