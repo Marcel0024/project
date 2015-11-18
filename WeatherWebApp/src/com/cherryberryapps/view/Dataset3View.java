@@ -2,7 +2,6 @@ package com.cherryberryapps.view;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 import com.cherryberryapps.model.DBConnection;
 import com.vaadin.addon.charts.Chart;
@@ -130,7 +129,7 @@ public class Dataset3View extends VerticalLayout {
 			public void markerClicked(GoogleMapMarker clickedMarker) {
 				Window subWindow = new Window();
 				subWindow.center();
-				subWindow.setWidth("50%");
+				subWindow.setWidth("80%");
 				subWindow.setHeight("50%");
 				subWindow.setResizable(false);
 				subWindow.setResponsive(true);
@@ -219,21 +218,17 @@ public class Dataset3View extends VerticalLayout {
 		
 		while (update) {
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(60000);
 				UI.getCurrent().access(new Runnable() {
 					
 					@Override
 					public void run() {	
-						//ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForHumidity(caption);
-						//calulateHumidity(dataSeriesItems);
-						Random random = new Random();
-						
-						int randomInt = random.nextInt(80) + 60;
-						DataSeriesItem data = new DataSeriesItem("Dummy", randomInt);
-						//dataSeries.add(data,true,true);
-						//data = null;
-						//DataSeriesItem data = new DataSeriesItem((String)dataSeriesItems.get(0).get(2), (double) dataSeriesItems.get(0).get(3));
+						ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForRealTimeHumidity(caption);
+						calulateHumidity(dataSeriesItems);
+			
+						DataSeriesItem data = new DataSeriesItem((String)dataSeriesItems.get(0).get(2), (double) dataSeriesItems.get(0).get(3));
 						dataSeries.add(data,true,true);
+						//data = null;
 						chart.drawChart();
 						
 					}

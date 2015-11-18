@@ -150,7 +150,7 @@ public class DBConnection {
 		
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn WHERE concat(measurements.date,' ', measurements.time) >= DATE_SUB(NOW(), INTERVAL 161 MINUTE)  AND stations.name = '"+ caption +"'");
+			resultSet = statement.executeQuery("SELECT AVG(temperature), AVG(dew_point), time FROM measurements JOIN stations ON measurements.station = stations.stn WHERE concat(measurements.date,' ', measurements.time) >= DATE_SUB(NOW(), INTERVAL 61 MINUTE)  AND stations.name = '"+ caption +"'");
 			int index = 0;
 			while (resultSet.next()) {
 				dataSeriesItems.add(index, new ArrayList<Object>());

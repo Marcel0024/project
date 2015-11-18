@@ -13,7 +13,7 @@ import org.xml.sax.SAXException;
 
 
 public class WeatherServer {
-private static final int PORT = 7786;
+private static final int PORT = 7789;
 ServerSocket server; 
 DataHandler dataHandler;
 
@@ -25,7 +25,7 @@ DataHandler dataHandler;
 			start();
 			
 			}catch(IOException ioe) {
-				System.out.println("Could not connect to port 7786");
+				System.out.println("Could not connect to port 7789");
 				System.err.println(ioe);
 			}
 		
