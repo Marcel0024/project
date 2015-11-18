@@ -129,7 +129,28 @@ public class DBConnection {
 		
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn AND stations.name = '"+ caption +"'");
+			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn WHERE stations.name = '"+ caption +"'");
+			int index = 0;
+			while (resultSet.next()) {
+				dataSeriesItems.add(index, new ArrayList<Object>());
+				dataSeriesItems.get(index).add(resultSet.getDouble(1));
+				dataSeriesItems.get(index).add(resultSet.getDouble(2));
+				dataSeriesItems.get(index).add(resultSet.getString(3).substring(0, 8));
+				index++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dataSeriesItems;
+	}
+	
+	public ArrayList<ArrayList<Object>> getDataForRealTimeHumidity(String caption) {
+		ArrayList<ArrayList<Object>> dataSeriesItems = new ArrayList<ArrayList<Object>>();
+		
+		try {
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn WHERE concat(measurements.date,' ', measurements.time) >= DATE_SUB(NOW(), INTERVAL 161 MINUTE)  AND stations.name = '"+ caption +"'");
 			int index = 0;
 			while (resultSet.next()) {
 				dataSeriesItems.add(index, new ArrayList<Object>());
