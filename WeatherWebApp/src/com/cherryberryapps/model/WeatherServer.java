@@ -13,7 +13,7 @@ import org.xml.sax.SAXException;
 
 
 public class WeatherServer {
-private static final int PORT = 7789;
+private static final int PORT = 7786;
 ServerSocket server; 
 DataHandler dataHandler;
 
