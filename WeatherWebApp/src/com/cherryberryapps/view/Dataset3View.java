@@ -2,6 +2,7 @@ package com.cherryberryapps.view;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import com.cherryberryapps.model.DBConnection;
 import com.vaadin.addon.charts.Chart;
@@ -38,6 +39,7 @@ public class Dataset3View extends VerticalLayout {
 	private DataSeries dataSeries;
 	private boolean update;
 	int count = 0;
+	Chart chart;
 	
 	public Dataset3View(UI window) {
 		this.window = window;
@@ -135,7 +137,8 @@ public class Dataset3View extends VerticalLayout {
 				
 				VerticalLayout subContent = new VerticalLayout();
 		        subContent.setMargin(true);
-		        subContent.addComponent(buildChart(clickedMarker.getCaption()));
+		        chart = buildChart(clickedMarker.getCaption());
+		        subContent.addComponent(chart);
 		        
 		        subWindow.setContent(subContent);
 		        subWindow.addCloseListener(new CloseListener() {
@@ -176,7 +179,7 @@ public class Dataset3View extends VerticalLayout {
 		}
 	}
 
-	protected Component buildChart(String caption) {
+	protected Chart buildChart(String caption) {
 		
 		ArrayList<ArrayList<Object>> dataSeriesItems = connection.getDataForHumidity(caption);
 		calulateHumidity(dataSeriesItems);
@@ -216,19 +219,23 @@ public class Dataset3View extends VerticalLayout {
 		
 		while (update) {
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 				UI.getCurrent().access(new Runnable() {
 					
 					@Override
 					public void run() {	
-						dataSeries.add(new DataSeriesItem("Dummy", 80.0), false, true);
-						//window.push();
-						/*ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForHumidity(caption);
-						calulateHumidity(dataSeriesItems);
+						//ArrayList<ArrayList<Object>>  dataSeriesItems = connection.getDataForHumidity(caption);
+						//calulateHumidity(dataSeriesItems);
+						Random random = new Random();
 						
-						for (int i = 0; i < dataSeriesItems.size(); i++) {
-							dataSeries.add(new DataSeriesItem((String)dataSeriesItems.get(i).get(2), (double) dataSeriesItems.get(i).get(3)));
-						}*/
+						int randomInt = random.nextInt(80) + 60;
+						DataSeriesItem data = new DataSeriesItem("Dummy", randomInt);
+						//dataSeries.add(data,true,true);
+						//data = null;
+						//DataSeriesItem data = new DataSeriesItem((String)dataSeriesItems.get(0).get(2), (double) dataSeriesItems.get(0).get(3));
+						dataSeries.add(data,true,true);
+						chart.drawChart();
+						
 					}
 				});
 			} catch (InterruptedException e) {
