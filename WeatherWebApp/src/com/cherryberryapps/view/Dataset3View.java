@@ -141,8 +141,7 @@ public class Dataset3View extends VerticalLayout {
 		        subContent.addComponent(chart);
 		        
 		        subWindow.setContent(subContent);
-		       
-		        
+		      
 		        window.addWindow(subWindow);
 		        
 		        Thread updateThread = new Thread(new Runnable() {
@@ -202,7 +201,7 @@ public class Dataset3View extends VerticalLayout {
 		//XAxis
 		XAxis xaxis = new XAxis();
 		xaxis.setTitle("Time");
-		xaxis.setReversed(false);
+		//xaxis.setReversed(false);
 		xaxis.setCategories((String)dataSeriesItems.get(0).get(2));
 		conf.addxAxis(xaxis);
 		
@@ -224,7 +223,7 @@ public class Dataset3View extends VerticalLayout {
 		
 		while (update) {
 			try {
-				Thread.sleep(60000);
+				Thread.sleep(10000);
 				UI.getCurrent().access(new Runnable() {
 					
 					@Override
