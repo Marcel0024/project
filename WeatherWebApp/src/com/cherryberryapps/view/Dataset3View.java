@@ -127,6 +127,7 @@ public class Dataset3View extends VerticalLayout {
 			
 			@Override
 			public void markerClicked(GoogleMapMarker clickedMarker) {
+				
 				Window subWindow = new Window();
 				subWindow.center();
 				subWindow.setWidth("80%");
@@ -140,25 +141,29 @@ public class Dataset3View extends VerticalLayout {
 		        subContent.addComponent(chart);
 		        
 		        subWindow.setContent(subContent);
-		        subWindow.addCloseListener(new CloseListener() {
-					
-					@Override
-					public void windowClose(CloseEvent e) {
-						update = false;
-					}
-				});
+		       
 		        
 		        window.addWindow(subWindow);
 		        
-		        new Thread(new Runnable() {
+		        Thread updateThread = new Thread(new Runnable() {
 					
 					@Override
 					public void run() {
 						update = true;
 						updateChart(clickedMarker.getCaption());
-						
 					}
-				}).start();
+				});
+		        updateThread.start();
+		        
+		        subWindow.addCloseListener(new CloseListener() {
+		        	
+					@Override
+					public void windowClose(CloseEvent e) {
+						update = false;
+						updateThread.interrupt();
+					}
+				});
+		        
 			}
 		});
         
@@ -197,6 +202,7 @@ public class Dataset3View extends VerticalLayout {
 		//XAxis
 		XAxis xaxis = new XAxis();
 		xaxis.setTitle("Time");
+		xaxis.setReversed(false);
 		xaxis.setCategories((String)dataSeriesItems.get(0).get(2));
 		conf.addxAxis(xaxis);
 		

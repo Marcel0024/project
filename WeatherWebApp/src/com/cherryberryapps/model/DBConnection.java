@@ -129,7 +129,7 @@ public class DBConnection {
 		
 		try {
 			statement = connection.createStatement();
-			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn WHERE stations.name = '"+ caption +"'");
+			resultSet = statement.executeQuery("SELECT temperature, dew_point, time FROM measurements JOIN stations ON measurements.station = stations.stn WHERE stations.name = '"+ caption +"' ORDER BY ID DESC LIMIT 10 ");
 			int index = 0;
 			while (resultSet.next()) {
 				dataSeriesItems.add(index, new ArrayList<Object>());
